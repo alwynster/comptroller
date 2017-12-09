@@ -33,6 +33,15 @@
     <ClCompile Include="lib\tinyxml2\tinyxml2.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="lib\Razer\Razer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Razer\ChromaSDK\ChromaSDKImpl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\Razer\ChromaSDK\FrameController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -54,6 +63,24 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="lib\tinyxml2\tinyxml2.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Razer\ChromaSDK\RzChromaSDKDefines.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Razer\ChromaSDK\RzChromaSDKTypes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Razer\ChromaSDK\RzErrors.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Razer\Razer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Razer\ChromaSDK\ChromaSDKImpl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Razer\ChromaSDK\FrameController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
