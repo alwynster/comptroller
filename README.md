@@ -2,7 +2,8 @@
 
 Modules to be developed:
 
-- [ ] AIDA64 API (read sensors)
+- [ ]	AIDA64 API (read sensors)
+- [ ]	MSI Afterburner API (read sensors)
 - [ ] 	Razer API
 - [ ] 	Asus Aura API
 - [ ] 	MCU interface
