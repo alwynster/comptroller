@@ -1,0 +1,826 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/C++/C++ Single File.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"Traditional"
+			]
+		],
+		[
+			[
+				[
+					"Packages/LaTeXing/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXing/LaTeX.sublime-build",
+					"Clean up Files"
+				]
+			],
+			[
+				"Packages/LaTeXing/LaTeX.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 368.0,
+		"last_filter": "log",
+		"selected_items":
+		[
+			[
+				"log",
+				"Git: Log All"
+			],
+			[
+				"pull",
+				"Git: Pull"
+			],
+			[
+				"git commit",
+				"Git: Commit"
+			],
+			[
+				"git add",
+				"Git: Add All"
+			],
+			[
+				"git pul",
+				"Git: Pull"
+			],
+			[
+				"git add ",
+				"Git: Add All"
+			],
+			[
+				"git pull",
+				"Git: Pull"
+			],
+			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"git commit ",
+				"Git: Commit"
+			],
+			[
+				"diff",
+				"Git: Diff Current File"
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"git comi",
+				"Git: Commit"
+			],
+			[
+				"git add al",
+				"Git: Add All"
+			],
+			[
+				"make",
+				"Build With: Make"
+			],
+			[
+				"gitpush",
+				"Git: Push"
+			],
+			[
+				"git add all",
+				"Git: Add All"
+			],
+			[
+				"git diff curr",
+				"Git: Diff Current File"
+			],
+			[
+				"git log",
+				"Git: Log All"
+			],
+			[
+				"git stash",
+				"Git: Stash Changes"
+			],
+			[
+				"git diff curre",
+				"Git: Diff Current File"
+			],
+			[
+				"git add a",
+				"Git: Add All"
+			],
+			[
+				"packageinstall",
+				"Package Control: Install Package"
+			],
+			[
+				"git addall",
+				"Git: Add All"
+			],
+			[
+				"gt commit",
+				"Git: Commit"
+			],
+			[
+				"package update",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"git log a",
+				"Git: Log All"
+			],
+			[
+				"build",
+				"Build With: LaTeX"
+			],
+			[
+				"git commt",
+				"Git: Amend Commit"
+			],
+			[
+				"git all ",
+				"Git: Add All"
+			],
+			[
+				"git log ",
+				"Git: Log All"
+			],
+			[
+				"git adda ",
+				"Git: Add All"
+			],
+			[
+				"git comm",
+				"Git: Commit"
+			],
+			[
+				"git add cur",
+				"Git: Add Current File"
+			],
+			[
+				"git add cu",
+				"Git: Add Current File"
+			],
+			[
+				"git branch",
+				"Git: Change Branch"
+			],
+			[
+				"git merge ",
+				"Git: Merge Branch"
+			],
+			[
+				"git merge",
+				"Git: Merge Branch"
+			],
+			[
+				"git change",
+				"Git: Change Branch"
+			],
+			[
+				"git push tags",
+				"Git: Push Tags"
+			],
+			[
+				"new tag",
+				"Git: New Tag"
+			],
+			[
+				"tags",
+				"Git: Show Tags"
+			],
+			[
+				"git new tag",
+				"Git: New Tag"
+			],
+			[
+				"git log curren",
+				"Git: Log Current File"
+			],
+			[
+				"diff current",
+				"Git: Diff Current File"
+			],
+			[
+				"git log curr",
+				"Git: Log Current File"
+			],
+			[
+				"git log cur",
+				"Git: Log Current File"
+			],
+			[
+				"git graph",
+				"Git: Graph All"
+			],
+			[
+				"change",
+				"Git: Change Branch"
+			],
+			[
+				"remote",
+				"Git: Track Remote Branch"
+			],
+			[
+				"branch",
+				"Git: Change Branch"
+			],
+			[
+				"git push ",
+				"Git: Push"
+			],
+			[
+				"git tag ",
+				"Git: New Tag"
+			],
+			[
+				"git diff current",
+				"Git: Diff Current File"
+			],
+			[
+				"git ",
+				"Git: Diff Current File"
+			],
+			[
+				"git show tags",
+				"Git: Show Tags"
+			],
+			[
+				"git tag",
+				"Git: Delete Tag"
+			],
+			[
+				"git showtag",
+				"Git: Show Tags"
+			],
+			[
+				"git tag new",
+				"Git: Diff Staged Files (Ignore Whitespace)"
+			],
+			[
+				"set syntax latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Channel"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 420.0
+	},
+	"console":
+	{
+		"height": 153.0,
+		"history":
+		[
+			"sublime.log_commands(True)",
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": false,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU"
+	],
+	"file_history":
+	[
+		"/C/Users/alwynster/git/elasticnodehardware/elasticNode.sch",
+		"/C/Users/alwynster/git/elasticnodehardware/elasticNode.brd",
+		"/C/Users/alwynster/git/percomdemo2017/percom2017.sublime-project",
+		"/C/Users/alwynster/git/qmk/keyboards/satan/satan.h",
+		"/C/Users/alwynster/git/sensys2017/notes.txt",
+		"/C/Users/alwynster/git/qmk/tmk_core/common/backlight.c",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemUsage.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemArchitecture.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Evaluation.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Introduction.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/RelatedWork.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemOverview.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemModel.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/main.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/data/executionTimes.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/bib/local.bib",
+		"/C/Users/alwynster/git/computing-frontiers-2017/.gitignore",
+		"/C/Users/alwynster/git/computing-frontiers-2017/bib/library.bib",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Conclusions.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/ex6/ex6.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/ex4/ex4.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/ex2/ex2.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/old_experiments/ex2/ex2.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/email comments.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/main.bbl",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/ProgrammingModel.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Requirements.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/discussion.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/data/overheads.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/explot.py",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/old_experiments/ex4/ex4.txt"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 102.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 38.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 142.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 142.0
+	},
+	"output.latextools":
+	{
+		"height": 142.0
+	},
+	"pinned_build_system": "",
+	"project": "comptroller.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"percom",
+				"percomdemo2017.tex"
+			],
+			[
+				"body",
+				"body.tex"
+			],
+			[
+				"abstr",
+				"abstract.tex"
+			],
+			[
+				"paper.",
+				"paper.tex"
+			],
+			[
+				"abstra",
+				"abstract.tex"
+			],
+			[
+				"",
+				"notes_v1.txt"
+			],
+			[
+				"notes",
+				"notes_v1.txt"
+			],
+			[
+				"txt",
+				"notes.txt"
+			],
+			[
+				"backlight",
+				"tmk_core\\common\\backlight.c"
+			],
+			[
+				"main",
+				"main.tex"
+			],
+			[
+				"overv",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"model",
+				"content\\SystemModel.tex"
+			],
+			[
+				"intro",
+				"content\\Introduction.tex"
+			],
+			[
+				"rel",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"evaluat",
+				"content\\Evaluation.tex"
+			],
+			[
+				"evlu",
+				"content\\Evaluation.tex"
+			],
+			[
+				"usage",
+				"content\\SystemUsage.tex"
+			],
+			[
+				"archi",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"realte",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"overview",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"realted",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"intr",
+				"content\\Introduction.tex"
+			],
+			[
+				"arch",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"con",
+				"content\\Conclusions.tex"
+			],
+			[
+				"evaluation",
+				"content\\Evaluation.tex"
+			],
+			[
+				"over",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"relate",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"rea",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"local",
+				"bib\\local.bib"
+			],
+			[
+				"loal",
+				"bib\\local.bib"
+			],
+			[
+				"related",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"arc",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"main.te",
+				"main.tex"
+			],
+			[
+				"eval",
+				"content\\Evaluation.tex"
+			],
+			[
+				"lib",
+				"bib\\library.bib"
+			],
+			[
+				"librar",
+				"bib\\library.bib"
+			],
+			[
+				"eva",
+				"content\\Evaluation.tex"
+			],
+			[
+				"conclu",
+				"content\\Conclusions.tex"
+			],
+			[
+				"conc",
+				"content\\Conclusions.tex"
+			],
+			[
+				"exec",
+				"data\\executionTimes.tex"
+			],
+			[
+				"comments",
+				"content\\email comments.txt"
+			],
+			[
+				"oldex4",
+				"experiments\\old_experiments\\ex4\\ex4.txt"
+			],
+			[
+				"ex4",
+				"experiments\\ex4\\ex4.txt"
+			],
+			[
+				"ex2.",
+				"experiments\\ex2\\ex2.txt"
+			],
+			[
+				"expl",
+				"experiments\\explot.py"
+			],
+			[
+				"reqre",
+				"content\\Requirements.tex"
+			],
+			[
+				"evalu",
+				"content\\Evaluation.tex"
+			],
+			[
+				"ev",
+				"content\\Evaluation.tex"
+			],
+			[
+				"req",
+				"content\\Requirements.tex"
+			],
+			[
+				"require",
+				"content\\Requirements.tex"
+			],
+			[
+				"systemmod",
+				"content\\SystemModel.tex"
+			],
+			[
+				"main.",
+				"main.tex"
+			],
+			[
+				"overi",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"mode",
+				"content\\SystemModel.tex"
+			],
+			[
+				"programm",
+				"content\\ProgrammingModel.tex"
+			],
+			[
+				"evaluate",
+				"content\\Evaluation.tex"
+			],
+			[
+				"programming",
+				"content\\ProgrammingModel.tex"
+			],
+			[
+				"systemmodel",
+				"content\\SystemModel.tex"
+			],
+			[
+				"programmingmodel.t",
+				"content\\ProgrammingModel.tex"
+			],
+			[
+				"systemar",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"systemc",
+				"content\\SystemArchitecture.tex"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 235.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

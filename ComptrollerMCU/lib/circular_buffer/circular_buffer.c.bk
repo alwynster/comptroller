@@ -1,0 +1,191 @@
+#include "circular_buffer.h"
+#include "../softuart/softuart.h"
+#include <avr/interrupt.h>
+
+int circBufPop(circBuf_t *c, uint8_t *data)
+{
+    cli();
+
+    // if the head isn't ahead of the tail, we don't have any characters
+    if (c->head == c->tail) // check if circular buffer is empty
+    {
+        sei();
+        return 0;          // and return with an error
+    }
+
+    // next is where tail will point to after this read.
+    int next = c->tail + 1;
+    if(next >= c->maxLen)
+        next = 0;
+
+    c->currentLen--;
+    *data = c->buffer[c->tail]; // Read data and then move
+    c->tail = next;             // tail to next data offset.
+
+    sei();
+
+    return 1;  // return success to indicate successful pop.
+}
+
+uint8_t circBufSpace(circBuf_t *c)
+{
+    return c->maxLen - c->currentLen;
+}
+
+uint8_t circBufCount(circBuf_t *c) { return c->currentLen; }
+uint8_t circBufCountFloat(circBuf_t *c) { return c->currentLen / sizeof(float); }
+uint8_t circBufCount16(circBuf_t *c) { return c->currentLen / sizeof(uint16_t); }
+uint8_t circBufCountCurrentMeasurement(circBuf_t *c) { return c->currentLen / sizeof(currentMeasurement); }
+
+int circBufPush(circBuf_t *c, uint8_t data)
+{
+    cli();
+
+    // next is where head will point to after this write.
+    int next = c->head + 1;
+    if (next >= c->maxLen)
+        next = 0;
+
+    if (next == c->tail) // check if circular buffer is full
+    {
+        sei();
+        return 0;       // and return with an error.
+    }
+
+    c->buffer[c->head] = data; // Load data and then move
+    c->head = next;            // head to next data offset.
+    c->currentLen++;
+
+    sei();
+    return 1;  // return success to indicate successful push.
+}
+
+// encode floating point number and put in buffer
+int circBufPushFloat(circBuf_t *c, float data)
+{
+    uint8_t size = sizeof(float);
+    // convert to uint8_t
+    uint8_t *buf = (uint8_t *) &data;
+
+    // put all uint8_t in circbuf
+    if (circBufSpace(c) >= size)
+    {
+        uint8_t i;
+        for (i = 0; i < size; i++)
+        {
+            // put uint8_t in one at a time 
+            circBufPush(c, *(buf++));
+        }
+        return 1;
+    }
+    return 0;
+}
+
+
+// Fetch float from buffer and pop
+int circBufPopFloat(circBuf_t *c, float *data)
+{
+    uint8_t size = sizeof(float);
+    // convert to uint8_t
+    uint8_t *buf = (uint8_t *) data;
+
+    // put all uint8_t in circbuf
+    if (c->currentLen >= size)
+    {
+        uint8_t i;
+        for (i = 0; i < size; i++)
+        {
+            // put uint8_t in one at a time 
+            circBufPop(c, buf++);
+        }
+        return 1;
+    }
+    return  0;
+}
+
+// encode floating point number and put in buffer
+int circBufPush16(circBuf_t *c, uint16_t data)
+{
+    uint8_t size = sizeof(uint16_t);
+    // convert to uint8_t
+    uint8_t *buf = (uint8_t *) &data;
+
+    // put all uint8_t in circbuf
+    if (circBufSpace(c) >= size)
+    {
+        uint8_t i;
+        for (i = 0; i < size; i++)
+        {
+            // put uint8_t in one at a time 
+            circBufPush(c, *(buf++));
+        }
+        return 1;
+    }
+    return 0;
+}
+
+
+// Fetch float from buffer and pop
+int circBufPop16(circBuf_t *c, uint16_t *data)
+{
+    uint8_t size = sizeof(uint16_t);
+    // convert to uint8_t
+    uint8_t *buf = (uint8_t *) data;
+
+    // put all uint8_t in circbuf
+    if (c->currentLen >= size)
+    {
+        uint8_t i;
+        for (i = 0; i < size; i++)
+        {
+            // put uint8_t in one at a time 
+            circBufPop(c, buf++);
+        }
+        return 1;
+    }
+    return  0;
+}
+
+// Fetch float from buffer and pop
+int circBufPopCurrentMeasurement(circBuf_t *c, currentMeasurement *data)
+{
+    uint8_t size = sizeof(currentMeasurement);
+    // convert to uint8_t
+    uint8_t *buf = (uint8_t *) data;
+
+    // put all uint8_t in circbuf
+    if (c->currentLen >= size)
+    {
+        uint8_t i;
+        for (i = 0; i < size; i++)
+        {
+            // put uint8_t in one at a time 
+            circBufPop(c, buf++);
+        }
+        return 1;
+    }
+    return  0;
+}
+
+
+
+int circBufPushCurrentMeasurement(circBuf_t *c, currentMeasurement data)
+{
+    uint8_t size = sizeof(currentMeasurement);
+    // convert to uint8_t
+    uint8_t *buf = (uint8_t *) &data;
+
+    // put all uint8_t in circbuf
+    if (circBufSpace(c) >= size)
+    {
+        uint8_t i;
+        for (i = 0; i < size; i++)
+        {
+            // put uint8_t in one at a time 
+            circBufPush(c, *buf++);
+        }
+
+        return 1;
+    }
+    return  0;
+}

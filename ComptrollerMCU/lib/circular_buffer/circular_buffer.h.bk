@@ -1,0 +1,44 @@
+#ifndef CIRCULAR_BUFFER_H
+#define CIRCULAR_BUFFER_H
+
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "lib/current_sense/current_measurement.h"
+// #include <avr/pgmspace.h>
+
+
+typedef struct {
+    uint8_t * const buffer;
+    int head;
+    int tail;
+    const int maxLen;
+    int currentLen;
+} circBuf_t;
+
+// init function:
+#define CIRCBUF_DEF(x,y)          \
+    volatile uint8_t x##_dataSpace[y];     \
+    circBuf_t x = {               \
+        .buffer = x##_dataSpace,  \
+        .head = 0,                \
+        .tail = 0,                \
+        .maxLen = y,              \
+        .currentLen = 0			  \
+    }
+
+uint8_t circBufSpace(circBuf_t *c);
+uint8_t circBufCount(circBuf_t *c);
+uint8_t circBufCountFloat(circBuf_t *c);
+uint8_t circBufCount16(circBuf_t *c);
+
+int circBufPush(circBuf_t *c, uint8_t data);
+int circBufPop(circBuf_t *c, uint8_t *data);
+int circBufPushFloat(circBuf_t *c, float data);
+int circBufPopFloat(circBuf_t *c, float *data);
+int circBufPush16(circBuf_t *c, uint16_t data);
+int circBufPop16(circBuf_t *c, uint16_t *data);
+int circBufPushCurrentMeasurement(circBuf_t *c, currentMeasurement data);
+int circBufPopCurrentMeasurement(circBuf_t *c, currentMeasurement *data);
+uint8_t circBufCountCurrentMeasurement(circBuf_t *c);
+#endif

@@ -33,6 +33,15 @@
     <ClCompile Include="lib\tinyxml2\tinyxml2.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="lib\UART\UART.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LED\LED.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LED\LEDController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -54,6 +63,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="lib\tinyxml2\tinyxml2.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UART\UART.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LED\LED.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LED\LEDController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
