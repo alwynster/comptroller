@@ -6,52 +6,21 @@
 #include <stdio.h>
 #include <string.h>
 #include "ws2812b.h"
+#include "ledString.h"
 
-#define PIN 0
+
+#define PIN_1 4
+#define PIN_2 3
+#define PIN_3 6
 
 uint8_t *pixels;
-uint8_t num_leds = 20;
+uint8_t num_leds = 30;
 #define numBytes (num_leds * 3)
 
-void showPixels(void);
 
-void initLedString(void)
+void showLeds(ledString *leds)
 {
-  // change these based on pin
-  DDRC |= _BV(PIN);
-  PORTC |= _BV(PIN);
-
-  changeNumLeds(num_leds); 
-
-  showPixels();
-}
-
-void changeNumLeds(uint16_t numLeds)
-{
-  num_leds = numLeds;
-
-  if (pixels)
-    free(pixels);
-  pixels = malloc(numBytes);
-
-}
-
-void ledStatic(uint8_t red, uint8_t green, uint8_t blue)
-{
-  uint8_t *ptr = pixels;
-  for (int i = 0; i < num_leds; i++)
-  {
-    *ptr++ = green;
-    *ptr++ = red;
-    *ptr++ = blue;
-  }
-  // memset(pixels, 255, numBytes);
-  showPixels();
-}
-
-void showPixels(void)
-{
-  if(!pixels) return;
+  if(!leds->buffer) return;
 
   _delay_us(50);
   // Data latch = 50+ microsecond pause in the output stream.  Rather than
@@ -77,9 +46,9 @@ void showPixels(void)
 
   cli(); // Need 100% focus on instruction timing
 
-  volatile uint16_t i   = numBytes; // Loop counter
+  volatile uint16_t i   = 3 * leds->numLeds; // Loop counter
   volatile uint8_t
-   *ptr = pixels,   // Pointer to next byte
+   *ptr = leds->buffer,   // Pointer to next byte
     b   = *ptr++,   // Current byte value
     hi,             // PORT w/output bit set high
     lo;             // PORT w/output bit set low
@@ -106,8 +75,22 @@ void showPixels(void)
 
     volatile uint8_t next, bit;
 
-    volatile uint8_t *port = &PORTC;
-    uint8_t pinMask = _BV(PIN);
+    volatile uint8_t *port = leds->port;
+    uint8_t pinMask = _BV(leds->pin);
+
+    // // port = &PORTB;
+    //   pinMask = _BV(PIN_1);
+    // }
+    // else if (index == 1)
+    // {
+    //   port = &PORTB;
+    //   pinMask = _BV(PIN_2);
+    // }
+    // else
+    // {    
+    //   port = &PORTD;
+    //   pinMask = _BV(PIN_3);
+    // }
 
     hi   = *port |  pinMask;
     lo   = *port & ~pinMask;

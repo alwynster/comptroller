@@ -19,7 +19,7 @@ void LED::setColour(uint8_t r, uint8_t g, uint8_t b)
 
 void LED::getColour(uint8_t *destination)
 {
-	*destination = r;
+	*(destination + 0) = r;
 	*(destination + 1) = g;
 	*(destination + 2) = b;
 }
