@@ -101,6 +101,11 @@ void uartWriteStringLength(char *s, uint8_t length)
 	uartWriteNext();
 }
 
+uint8_t uartAvailable(void)
+{
+	return ( UCSR0A & _BV(RXC0)) != 0;
+}
+
 // remember to clear interrupts
 uint8_t uartReceiveCharBlocking()
 {

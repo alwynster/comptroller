@@ -131,7 +131,7 @@ void showLeds(ledString *leds)
       "w" (i)              // %7
     ); // end asm
 
-  
+  // *port |= pinMask;
   
   sei();
 

@@ -47,4 +47,6 @@ void uartWriteDec32(uint32_t num);
 void uartWriteBin4(uint8_t num);
 void uartWriteFloat(float num);
 void uartAck(uint8_t c);
+
+uint8_t uartAvailable(void);
 #endif

@@ -29,46 +29,98 @@ int main(void)
 
 	uint8_t uart = 0x00;
 	uint8_t r, g, b;
-	// uint16_t num_leds = 0;
+	uint8_t r2, g2, b2;
+	uint8_t num_leds = 0;
 	uint8_t index;
 	ledString *string;
 
 	while(1)
 	{
-		uart = 0;	
-		// receive configs
-		while (uart != 'S')
+		// check if new uart data is available
+		if (uartAvailable())
 		{
-			uart = uartReceiveCharBlocking();
-			// uartWriteString("receiving...");
-			// _delay_ms(500);
+
+			uart = 0;	
+			// receive configs
+			// while (uart != 'S')
+			{
+				uart = uartReceiveCharBlocking();
+				// uartWriteString("receiving...");
+				// _delay_ms(500);
+			}
+
+			index = uartReceiveCharBlocking();
+
+			num_leds = uartReceiveCharBlocking();
+
+			// num_leds |= (uartReceiveCharBlocking()) << 8;
+			
+
+			switch(index)
+			{
+				case 0:
+					string = &leds1;
+					break;
+				case 1:
+					string = &leds2;
+					break;
+				case 2:
+				default:
+					string = &leds3;
+					break;
+			}		
+
+
+
+			// receive data
+			switch(uart)
+			{
+				case 'S':
+					// receive colour
+					r = uartReceiveCharBlocking();
+					g = uartReceiveCharBlocking();
+					b = uartReceiveCharBlocking();
+
+					updateNumLeds(string, num_leds);
+
+					ledStatic(string, r, g, b);
+
+					break;
+				case 'B':
+					// receive colour
+					r = uartReceiveCharBlocking();
+					g = uartReceiveCharBlocking();
+					b = uartReceiveCharBlocking();
+
+					r2 = uartReceiveCharBlocking();
+					g2 = uartReceiveCharBlocking();
+					b2 = uartReceiveCharBlocking();
+
+					string->animationSteps = uartReceiveCharBlocking();
+					string->animationSteps |= (uartReceiveCharBlocking() << 8);
+
+					updateNumLeds(string, num_leds);
+
+					ledBreathe(string, r, g, b, r2, g2, b2);
+
+					break;
+				default:
+					break;
+			}
 		}
-
-		index = uartReceiveCharBlocking();
-
-		// num_leds = uartReceiveCharBlocking();
-		// num_leds |= (uartReceiveCharBlocking()) << 8;
-		// changeNumLeds(num_leds);
-		
-		// receive colour
-		r = uartReceiveCharBlocking();
-		g = uartReceiveCharBlocking();
-		b = uartReceiveCharBlocking();
-
-		switch(index)
+		// otherwise check if leds are breathing
+		else
 		{
-			case 0:
-				string = &leds1;
-				break;
-			case 1:
-				string = &leds2;
-				break;
-			case 2:
-			default:
-				string = &leds3;
-				break;
+			ledAnimate(&leds1);
+			if (uartAvailable())
+				continue;
+			ledAnimate(&leds2);
+			if (uartAvailable())
+				continue;
+			ledAnimate(&leds3);
+			if (uartAvailable())
+				continue;
 		}
-		ledStatic(string, r, g, b);
 	}
 	return 0;
 }

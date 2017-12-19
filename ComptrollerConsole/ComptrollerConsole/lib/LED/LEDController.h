@@ -13,6 +13,8 @@ public:
 	~LEDController();
 	void staticColour(uint32_t colour);
 	void staticColour(uint8_t red, uint8_t green, uint8_t blue);
+	void breathingColour(uint16_t steps, uint32_t colour1, uint32_t colour2);
+	void breathingColour(uint16_t steps, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2);
 
 protected:
 	uint8_t numLeds, index;
