@@ -1,34 +1,20 @@
 [Eagle]
-Version="08 04 03"
-Platform="Windows"
+Version="08 05 00"
+Platform="Mac OS X"
 Globals="Globals"
 Desktop="Desktop"
 
 [Globals]
 AutoSaveProject=1
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/connectors.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/diodes.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/fpga.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/ic.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/opto.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/passive.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/power.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/sensors.lbr"
-UsedLibrary="C:/Users/alwynster/git/eaglelibraries/wireless.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/connectors.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/diodes.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/fpga.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/ic.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/opto.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/passive.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/power.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/sensors.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/wireless.lbr"
 
-[Win_1]
-Type="Control Panel"
-Loc="0 0 1199 639"
-State=2
-Number=0
-
 [Desktop]
-Screen="3840 1377"
-Window="Win_1"
+Screen="640 480"
