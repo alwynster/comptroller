@@ -4,11 +4,43 @@
 		"selected_items":
 		[
 			[
-				"uartRe",
-				"uartReceiveCharBlocking"
+				"animationDirec",
+				"animationDirections"
+			],
+			[
+				"uint",
+				"uint16_t"
 			],
 			[
 				"uart",
+				"uartWriteDec16"
+			],
+			[
+				"red",
+				"red1"
+			],
+			[
+				"animtio",
+				"animationLength"
+			],
+			[
+				"aniamt",
+				"animationIndex"
+			],
+			[
+				"animt",
+				"animationIndex"
+			],
+			[
+				"animation",
+				"animationIndex"
+			],
+			[
+				"led",
+				"ledString"
+			],
+			[
+				"uartRe",
 				"uartReceiveCharBlocking"
 			],
 			[
@@ -32,17 +64,19 @@
 			"file": "main.c",
 			"settings":
 			{
-				"buffer_size": 1447,
+				"buffer_size": 3062,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
+			"contents": "#include \"ledString.h\"\n#include \"ws2812b.h\"\n#include <avr/io.h>\n#include <stdlib.h>\n#include <stdio.h>\n#include <string.h>\n#include <util/delay.h>\n\n#include \"../uart/uart.h\"\n\nvoid initLedString(ledString *string, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin)\n{\n  string->buffer = NULL;\n  \n  string->ddr = ddr;\n  string->port = port;\n  string->pin = pin;\n\n  // change these based on pin\n  *string->ddr |= _BV(string->pin);\n  *string->port &= ~_BV(string->pin);\n  \n  // if (string->buffer)\n  //   free(string->buffer);\n\n  // updateNumLeds(string, numberLeds);\n  \n  // showLeds(string);\n\n  string->animating = NONE;\n}\n\nvoid updateNumLeds(ledString *string, uint16_t numberLeds)\n{\n  string->numLeds = numberLeds;\n\n  if(string->buffer)\n    free(string->buffer);\n  if(string->animationIndexes)\n    free(string->animationIndexes);  \n  if(string->animationDirections)\n    free(string->animationDirections);\n\n  string->animationIndexes = (uint16_t *) malloc(string->numLeds * sizeof(uint16_t));\n  string->animationDirections = (animationDirection *) malloc(string->numLeds * sizeof(animationDirection));\n  string->buffer = (uint8_t *) malloc(string->numLeds * 3);\n  memset(string->buffer, 0, 3 * string->numLeds);\n}\n\nvoid ledStatic(ledString *string, uint8_t red, uint8_t green, uint8_t blue)\n{\n  uint8_t *ptr = string->buffer;\n  for (uint16_t i = 0; i < string->numLeds; i++)\n  {\n    *ptr++ = green;\n    *ptr++ = red;\n    *ptr++ = blue;\n  }\n  // memset(pixels, 255, numBytes);\n  showLeds(string);\n  string->animation = NONE;\n}\n\nvoid ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)\n{\n  uint16_t *steps = (uint16_t *) malloc(string->animationLength * 2 * sizeof(uint16_t));\n  uint16_t *stepsPtr = steps;\n  // count up\n  uint16_t increments = string->animationSteps / (string->animationLength - 1);\n  for (int i = 0; i < string->animationLength; i++)\n  {\n    *stepsPtr++ = i * increments;\n  }\n  for (int i = 0; i < string->animationLength; i++)\n  {\n    *stepsPtr++ = string->animationSteps - i * increments;\n  }\n\n  // assign initial values for each led\n  uint8_t *ptr = string->buffer;\n  uint8_t index = 0; // counts to animationLength * 2\n  for (int i = 0; i < string->numLeds; i++)\n  {\n    *ptr++ = green1;\n    *ptr++ = red1;\n    *ptr++ = blue1;\n\n    if (index < string->animationLength)\n      string->animationDirections[i] = FORWARD;\n    else\n      string->animationDirections[i] = BACKWARD;\n    string->animationIndexes[i] = steps[index++];\n    if (index > string->animationLength * 2 - 1) index = 0;\n  }\n  free(steps);\n\n  // save colour for animation\n  string->colour[0] = green1;\n  string->colour[1] = red1;\n  string->colour[2] = blue1;\n\n  // set up animations  \n  string->animationVector[0] = ((float) green2 - (float) green1) / (float) string->animationSteps;\n  string->animationVector[1] = ((float) red2 - (float) red1) / (float) string->animationSteps;\n  string->animationVector[2] = ((float) blue2 - (float) blue1) / (float) string->animationSteps;\n  \n  // string->animationIndex = 0;\n\n  string->animation = WAVE;\n\n  showLeds(string);\n}\n\nvoid ledBreathe(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)\n{\n  uint8_t *ptr = string->buffer;\n  for (int i = 0; i < string->numLeds; i++)\n  {\n    *ptr++ = green1;\n    *ptr++ = red1;\n    *ptr++ = blue1;\n\n    string->animationDirections[i] = FORWARD;\n    string->animationIndexes[i] = 0;\n  }\n\n  // save colour for animation\n  string->colour[0] = green1;\n  string->colour[1] = red1;\n  string->colour[2] = blue1;\n\n  // set up animations  \n  string->animationVector[0] = ((float) green2 - (float) green1) / (float) string->animationSteps;\n  string->animationVector[1] = ((float) red2 - (float) red1) / (float) string->animationSteps;\n  string->animationVector[2] = ((float) blue2 - (float) blue1) / (float) string->animationSteps;\n  \n  string->animationIndex = 0;\n\n  string->animation = BREATHE;\n\n  // memset(pixels, 255, numBytes);\n  showLeds(string);\n}\n\nvoid ledAnimate(ledString *string)\n{\n  // do nothing if string is not being animated\n  if (string->animation == NONE)\n    return;\n\n  // find next colour\n  uint8_t *ptr;\n  ptr = string->buffer;\n\n  // // check if done with animation in either direction\n  // if ((string->animating == FORWARD) && (string->animationIndex == string->animationSteps))\n  // {\n  //   uartWriteString(\"BACKWARD\\n\");\n  //   string->animating = BACKWARD;\n  // }\n  // else if ((string->animating == BACKWARD) && (string->animationIndex == 0))\n  // {\n  //   uartWriteString(\"FORWARD\\n\");\n  //   string->animating = FORWARD;\n  // }\n\n  // // update animation\n  // if (string->animating == FORWARD)\n  //   string->animationIndex++;\n  // else \n  //   string->animationIndex--;\n\n  // set colours correctly\n  for (int i = 0; i < string->numLeds; i++)\n  {\n    // check if done with animation in either direction\n    if ((string->animationDirections[i] == FORWARD) && (string->animationIndexes[i] == string->animationSteps))\n    {\n      // uartWriteString(\"BACKWARD\\n\");\n      string->animationDirections[i] = BACKWARD;\n    }\n    else if ((string->animationDirections[i] == BACKWARD) && (string->animationIndexes[i] == 0))\n    {\n      // uartWriteString(\"FORWARD\\n\");\n      string->animationDirections[i] = FORWARD;\n    }\n\n    // update animation\n    if (string->animationDirections[i] == FORWARD)\n      string->animationIndexes[i]++;\n    else \n      string->animationIndexes[i]--;\n\n    *ptr++ = string->colour[0] + ((uint8_t) (string->animationVector[0] * (float) string->animationIndexes[i]));\n    *ptr++ = string->colour[1] + ((uint8_t) (string->animationVector[1] * (float) string->animationIndexes[i]));\n    *ptr++ = string->colour[2] + ((uint8_t) (string->animationVector[2] * (float) string->animationIndexes[i]));\n  }\n\n  // for (int i = 0; i < 3; i++)\n  // {\n  //   if (string->animating == FORWARD)\n  //     string->colour[i] += string->animationVector[i];\n  //   else\n  //     string->colour[i] -= string->animationVector[i];\n  // }\n\n  // // write buffer for leds\n  // ptr = string->buffer;\n  // for (int j = 0; j < string->numLeds; j++)\n  // {\n  //   for (int i = 0; i < 3; i++)\n  //   { \n  //     *ptr++ = (uint8_t) string->colour[i];\n  //   }\n  // }\n\n  showLeds(string);\n}",
 			"file": "lib/ws2812b/ledString.c",
+			"file_size": 8851,
+			"file_write_time": 131597460212301388,
 			"settings":
 			{
-				"buffer_size": 903,
-				"encoding": "UTF-8",
+				"buffer_size": 6287,
 				"line_ending": "Windows"
 			}
 		},
@@ -50,7 +84,7 @@
 			"file": "lib/ws2812b/ledString.h",
 			"settings":
 			{
-				"buffer_size": 480,
+				"buffer_size": 1288,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -59,7 +93,7 @@
 			"file": "lib/ws2812b/ws2812b.c",
 			"settings":
 			{
-				"buffer_size": 5391,
+				"buffer_size": 5411,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -214,12 +248,20 @@
 				"Build With: Make"
 			],
 			[
-				"clean",
-				"Build With: Make - Clean"
+				"c",
+				"Set Syntax: C"
+			],
+			[
+				"stk",
+				"Set Syntax: Makefile"
 			],
 			[
 				"\\",
 				"Snippet: #!/usr/bin/env"
+			],
+			[
+				"clean",
+				"Build With: Make - Clean"
 			],
 			[
 				"build ",
@@ -501,8 +543,8 @@
 	],
 	"file_history":
 	[
-		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/uart/uart.h",
 		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/uart/uart.c",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/uart/uart.h",
 		"/C/Users/alwynster/git/elasticnodetest/main.c",
 		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/circular_buffer/circular_buffer.h",
 		"/C/Users/alwynster/git/elasticnodetest/lib/io/interrupts.c",
@@ -545,7 +587,7 @@
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 26.0
 	},
 	"find_in_files":
 	{
@@ -560,6 +602,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"malloc",
+			"numleds",
+			"b_inc",
+			"60",
+			"numleds",
+			"steps",
+			"mate(&leds1);\n\t\t\tledAnimate(&leds2);\n\t\t\tledAnimate(&leds3);\n\n\t\t\t_delay_ms",
 			"initledsintr",
 			"receive",
 			"debug",
@@ -593,7 +642,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -630,15 +679,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1447,
+						"buffer_size": 3062,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1375,
-								1375
+								1836,
+								1836
 							]
 						],
 						"settings":
@@ -647,10 +696,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 44.0,
+						"translation.y": 1512.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -659,73 +708,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 903,
+						"buffer_size": 6287,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								309,
-								309
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/ws2812b/ledString.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 480,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								375,
-								362
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/ws2812b/ws2812b.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5391,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								130,
-								150
+								3098,
+								3098
 							]
 						],
 						"settings":
@@ -735,10 +726,68 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1620.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/ws2812b/ledString.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1288,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								865,
+								865
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 193.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/ws2812b/ws2812b.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5411,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5327,
+								5327
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1859.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -763,10 +812,10 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 108.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -805,7 +854,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 172.0
+		"height": 170.0
 	},
 	"output.find_results":
 	{
@@ -833,6 +882,18 @@
 		"selected_items":
 		[
 			[
+				"ledstring",
+				"lib\\ws2812b\\ledString.h"
+			],
+			[
+				"",
+				"main.c"
+			],
+			[
+				"leds",
+				"lib\\ws2812b\\ledString.c"
+			],
+			[
 				"led",
 				"lib\\ws2812b\\ledString.c"
 			],
@@ -855,10 +916,6 @@
 			[
 				"abstra",
 				"abstract.tex"
-			],
-			[
-				"",
-				"notes_v1.txt"
 			],
 			[
 				"notes",

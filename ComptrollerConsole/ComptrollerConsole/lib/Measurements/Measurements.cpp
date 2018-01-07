@@ -10,6 +10,8 @@ Measurements::Measurements()
 	// connect to MSI Afterburner plugin
 	//sensors = new MSIAfterBurnerPlugin();
 
+ 	motherboardTemperature = gpuTemp = gpuFanPwm = gpuUsage = gpuPower = gpuVoltage = gpuMemoryTemp = gpuMemoryClock = gpuMemoryPower = gpuMemory = gpuCore = gpuVrm = cpuTemp = cpuFan = cpuUsage = cpuPower = ramUsage = pageFileUsage = -1;
+
 	gpuName = "";
 	time = CTime::CTime();
 }

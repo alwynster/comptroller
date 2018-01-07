@@ -19,18 +19,25 @@ int main(void)
 	_delay_ms(500);
 
 	ledString leds1, leds2, leds3;
-	initLedString(&leds1, &DDRB, &PORTB, 4, 30);
-	initLedString(&leds2, &DDRB, &PORTB, 3, 30);
-	initLedString(&leds3, &DDRD, &PORTD, 6, 1);
+	initLedString(&leds1, &DDRC, &PORTC, 0);
+	initLedString(&leds2, &DDRB, &PORTB, 3);
+	initLedString(&leds3, &DDRD, &PORTD, 6);
 
-	ledStatic(&leds1, 0, 0, 0);
-	ledStatic(&leds2, 0, 0, 0);
-	ledStatic(&leds3, 0, 0, 0);
+	// ledStatic(&leds1, 0, 0, 0);
+	// ledStatic(&leds2, 0, 0, 0);
+	// ledStatic(&leds3, 0, 0, 0);
+
+	leds1.animationLength = 6;
+	leds1.animationSteps = 1000;
+	updateNumLeds(&leds1, 6);
+	ledWave(&leds1, 100, 0, 1, 1, 0, 100);
+
+// void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 
 	uint8_t uart = 0x00;
 	uint8_t r, g, b;
 	uint8_t r2, g2, b2;
-	uint8_t num_leds = 0;
+	uint16_t num_leds = 0;
 	uint8_t index;
 	ledString *string;
 
@@ -51,7 +58,7 @@ int main(void)
 
 			index = uartReceiveCharBlocking();
 
-			num_leds = uartReceiveCharBlocking();
+			// num_leds = uartReceiveCharBlocking();
 
 			// num_leds |= (uartReceiveCharBlocking()) << 8;
 			
@@ -75,17 +82,30 @@ int main(void)
 			// receive data
 			switch(uart)
 			{
+				case 'I':
+					// init 
+					num_leds = uartReceiveCharBlocking();
+					num_leds |= (uartReceiveCharBlocking() << 8);
+
+					uartWriteString("setting num leds ");
+					uartWriteDec16(num_leds);
+					uartNewLine();
+
+					updateNumLeds(string, num_leds);
+					break;
+
 				case 'S':
 					// receive colour
 					r = uartReceiveCharBlocking();
 					g = uartReceiveCharBlocking();
 					b = uartReceiveCharBlocking();
 
-					updateNumLeds(string, num_leds);
 
 					ledStatic(string, r, g, b);
 
 					break;
+				case 'W':
+					string->animationLength = uartReceiveCharBlocking();
 				case 'B':
 					// receive colour
 					r = uartReceiveCharBlocking();
@@ -101,7 +121,10 @@ int main(void)
 
 					updateNumLeds(string, num_leds);
 
-					ledBreathe(string, r, g, b, r2, g2, b2);
+					if (uart == 'B')
+						ledBreathe(string, r, g, b, r2, g2, b2);
+					else
+						ledWave(string, r, g, b, r2, g2, b2);
 
 					break;
 				default:
@@ -114,12 +137,12 @@ int main(void)
 			ledAnimate(&leds1);
 			if (uartAvailable())
 				continue;
-			ledAnimate(&leds2);
-			if (uartAvailable())
-				continue;
-			ledAnimate(&leds3);
-			if (uartAvailable())
-				continue;
+			// ledAnimate(&leds2);
+			// if (uartAvailable())
+			// 	continue;
+			// ledAnimate(&leds3);
+			// if (uartAvailable())
+			// 	continue;
 		}
 	}
 	return 0;

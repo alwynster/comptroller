@@ -19,6 +19,7 @@ public:
 	float gpuFanPwm;
 	float gpuUsage;
 	float gpuPower;
+	float gpuVoltage;
 	float gpuMemoryTemp;
 	float gpuMemoryClock;
 	float gpuMemoryPower;
