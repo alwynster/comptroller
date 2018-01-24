@@ -27,10 +27,10 @@ int main(void)
 	// ledStatic(&leds2, 0, 0, 0);
 	// ledStatic(&leds3, 0, 0, 0);
 
-	leds1.animationLength = 6;
-	leds1.animationSteps = 1000;
-	updateNumLeds(&leds1, 6);
-	ledWave(&leds1, 100, 0, 1, 1, 0, 100);
+	// leds1.animationLength = 6;
+	// leds1.animationSteps = 1000;
+	// updateNumLeds(&leds1, 6);
+	// ledWave(&leds1, 100, 0, 1, 1, 0, 100);
 
 // void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 

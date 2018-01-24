@@ -22,7 +22,10 @@ public:
 protected:
 	uint8_t numLeds, index;
 
-	uint8_t *buffer;
-	LED *leds;
+	//uint8_t *buffer;
+	LED leds;
+
+	//void clearBuffer(void);
+
 	//LED leds[NUM_L EDS];
 };

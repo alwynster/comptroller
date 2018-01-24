@@ -19,6 +19,7 @@ Measurements::Measurements()
 
 Measurements::~Measurements()
 {
+	time = NULL;
 }
 
 void Measurements::Update()
