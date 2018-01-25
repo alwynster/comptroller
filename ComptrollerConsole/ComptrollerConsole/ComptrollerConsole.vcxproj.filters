@@ -40,6 +40,13 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="lib\Razer\ChromaSDK\FrameController.cpp">
+    <ClCompile Include="lib\UART\UART.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LED\LED.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LED\LEDController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,6 +88,16 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="lib\Razer\ChromaSDK\FrameController.h">
+    <ClInclude Include="lib\UART\UART.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LED\LED.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LED\LEDController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LED\WS2812_Definitions.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

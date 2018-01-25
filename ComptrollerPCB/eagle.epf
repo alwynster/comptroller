@@ -1,0 +1,20 @@
+[Eagle]
+Version="08 05 00"
+Platform="Mac OS X"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+UsedLibrary="/Users/alwynster/git/eaglelibraries/connectors.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/diodes.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/fpga.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/ic.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/opto.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/passive.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/power.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/sensors.lbr"
+UsedLibrary="/Users/alwynster/git/eaglelibraries/wireless.lbr"
+
+[Desktop]
+Screen="640 480"

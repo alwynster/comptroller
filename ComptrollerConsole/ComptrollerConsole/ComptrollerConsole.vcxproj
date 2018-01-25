@@ -153,17 +153,23 @@
   <ItemGroup>
     <ClCompile Include="ComptrollerConsole.cpp" />
     <ClCompile Include="lib\AIDA\AIDA.cpp" />
+    <ClCompile Include="lib\LED\LED.cpp" />
+    <ClCompile Include="lib\LED\LEDController.cpp" />
     <ClCompile Include="lib\Measurements\Measurements.cpp" />
     <ClCompile Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.cpp" />
     <ClCompile Include="lib\Razer\ChromaSDK\ChromaSDKImpl.cpp" />
     <ClCompile Include="lib\Razer\ChromaSDK\FrameController.cpp" />
     <ClCompile Include="lib\Razer\Razer.cpp" />
     <ClCompile Include="lib\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="lib\UART\UART.cpp" />
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\AIDA\AIDA.h" />
     <ClInclude Include="lib\AIDA\MAHMSharedMemory.h" />
+    <ClInclude Include="lib\LED\LED.h" />
+    <ClInclude Include="lib\LED\LEDController.h" />
+    <ClInclude Include="lib\LED\WS2812_Definitions.h" />
     <ClInclude Include="lib\Measurements\Measurements.h" />
     <ClInclude Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\ChromaSDKImpl.h" />
@@ -173,6 +179,7 @@
     <ClInclude Include="lib\Razer\ChromaSDK\RzErrors.h" />
     <ClInclude Include="lib\Razer\Razer.h" />
     <ClInclude Include="lib\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="lib\UART\UART.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

@@ -1,0 +1,1174 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"animationDirec",
+				"animationDirections"
+			],
+			[
+				"uint",
+				"uint16_t"
+			],
+			[
+				"uart",
+				"uartWriteDec16"
+			],
+			[
+				"red",
+				"red1"
+			],
+			[
+				"animtio",
+				"animationLength"
+			],
+			[
+				"aniamt",
+				"animationIndex"
+			],
+			[
+				"animt",
+				"animationIndex"
+			],
+			[
+				"animation",
+				"animationIndex"
+			],
+			[
+				"led",
+				"ledString"
+			],
+			[
+				"uartRe",
+				"uartReceiveCharBlocking"
+			],
+			[
+				"flash_",
+				"flash_arduino"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Makefile",
+			"settings":
+			{
+				"buffer_size": 8868,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "main.c",
+			"settings":
+			{
+				"buffer_size": 3062,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "#include \"ledString.h\"\n#include \"ws2812b.h\"\n#include <avr/io.h>\n#include <stdlib.h>\n#include <stdio.h>\n#include <string.h>\n#include <util/delay.h>\n\n#include \"../uart/uart.h\"\n\nvoid initLedString(ledString *string, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin)\n{\n  string->buffer = NULL;\n  \n  string->ddr = ddr;\n  string->port = port;\n  string->pin = pin;\n\n  // change these based on pin\n  *string->ddr |= _BV(string->pin);\n  *string->port &= ~_BV(string->pin);\n  \n  // if (string->buffer)\n  //   free(string->buffer);\n\n  // updateNumLeds(string, numberLeds);\n  \n  // showLeds(string);\n\n  string->animating = NONE;\n}\n\nvoid updateNumLeds(ledString *string, uint16_t numberLeds)\n{\n  string->numLeds = numberLeds;\n\n  if(string->buffer)\n    free(string->buffer);\n  if(string->animationIndexes)\n    free(string->animationIndexes);  \n  if(string->animationDirections)\n    free(string->animationDirections);\n\n  string->animationIndexes = (uint16_t *) malloc(string->numLeds * sizeof(uint16_t));\n  string->animationDirections = (animationDirection *) malloc(string->numLeds * sizeof(animationDirection));\n  string->buffer = (uint8_t *) malloc(string->numLeds * 3);\n  memset(string->buffer, 0, 3 * string->numLeds);\n}\n\nvoid ledStatic(ledString *string, uint8_t red, uint8_t green, uint8_t blue)\n{\n  uint8_t *ptr = string->buffer;\n  for (uint16_t i = 0; i < string->numLeds; i++)\n  {\n    *ptr++ = green;\n    *ptr++ = red;\n    *ptr++ = blue;\n  }\n  // memset(pixels, 255, numBytes);\n  showLeds(string);\n  string->animation = NONE;\n}\n\nvoid ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)\n{\n  uint16_t *steps = (uint16_t *) malloc(string->animationLength * 2 * sizeof(uint16_t));\n  uint16_t *stepsPtr = steps;\n  // count up\n  uint16_t increments = string->animationSteps / (string->animationLength - 1);\n  for (int i = 0; i < string->animationLength; i++)\n  {\n    *stepsPtr++ = i * increments;\n  }\n  for (int i = 0; i < string->animationLength; i++)\n  {\n    *stepsPtr++ = string->animationSteps - i * increments;\n  }\n\n  // assign initial values for each led\n  uint8_t *ptr = string->buffer;\n  uint8_t index = 0; // counts to animationLength * 2\n  for (int i = 0; i < string->numLeds; i++)\n  {\n    *ptr++ = green1;\n    *ptr++ = red1;\n    *ptr++ = blue1;\n\n    if (index < string->animationLength)\n      string->animationDirections[i] = FORWARD;\n    else\n      string->animationDirections[i] = BACKWARD;\n    string->animationIndexes[i] = steps[index++];\n    if (index > string->animationLength * 2 - 1) index = 0;\n  }\n  free(steps);\n\n  // save colour for animation\n  string->colour[0] = green1;\n  string->colour[1] = red1;\n  string->colour[2] = blue1;\n\n  // set up animations  \n  string->animationVector[0] = ((float) green2 - (float) green1) / (float) string->animationSteps;\n  string->animationVector[1] = ((float) red2 - (float) red1) / (float) string->animationSteps;\n  string->animationVector[2] = ((float) blue2 - (float) blue1) / (float) string->animationSteps;\n  \n  // string->animationIndex = 0;\n\n  string->animation = WAVE;\n\n  showLeds(string);\n}\n\nvoid ledBreathe(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)\n{\n  uint8_t *ptr = string->buffer;\n  for (int i = 0; i < string->numLeds; i++)\n  {\n    *ptr++ = green1;\n    *ptr++ = red1;\n    *ptr++ = blue1;\n\n    string->animationDirections[i] = FORWARD;\n    string->animationIndexes[i] = 0;\n  }\n\n  // save colour for animation\n  string->colour[0] = green1;\n  string->colour[1] = red1;\n  string->colour[2] = blue1;\n\n  // set up animations  \n  string->animationVector[0] = ((float) green2 - (float) green1) / (float) string->animationSteps;\n  string->animationVector[1] = ((float) red2 - (float) red1) / (float) string->animationSteps;\n  string->animationVector[2] = ((float) blue2 - (float) blue1) / (float) string->animationSteps;\n  \n  string->animationIndex = 0;\n\n  string->animation = BREATHE;\n\n  // memset(pixels, 255, numBytes);\n  showLeds(string);\n}\n\nvoid ledAnimate(ledString *string)\n{\n  // do nothing if string is not being animated\n  if (string->animation == NONE)\n    return;\n\n  // find next colour\n  uint8_t *ptr;\n  ptr = string->buffer;\n\n  // // check if done with animation in either direction\n  // if ((string->animating == FORWARD) && (string->animationIndex == string->animationSteps))\n  // {\n  //   uartWriteString(\"BACKWARD\\n\");\n  //   string->animating = BACKWARD;\n  // }\n  // else if ((string->animating == BACKWARD) && (string->animationIndex == 0))\n  // {\n  //   uartWriteString(\"FORWARD\\n\");\n  //   string->animating = FORWARD;\n  // }\n\n  // // update animation\n  // if (string->animating == FORWARD)\n  //   string->animationIndex++;\n  // else \n  //   string->animationIndex--;\n\n  // set colours correctly\n  for (int i = 0; i < string->numLeds; i++)\n  {\n    // check if done with animation in either direction\n    if ((string->animationDirections[i] == FORWARD) && (string->animationIndexes[i] == string->animationSteps))\n    {\n      // uartWriteString(\"BACKWARD\\n\");\n      string->animationDirections[i] = BACKWARD;\n    }\n    else if ((string->animationDirections[i] == BACKWARD) && (string->animationIndexes[i] == 0))\n    {\n      // uartWriteString(\"FORWARD\\n\");\n      string->animationDirections[i] = FORWARD;\n    }\n\n    // update animation\n    if (string->animationDirections[i] == FORWARD)\n      string->animationIndexes[i]++;\n    else \n      string->animationIndexes[i]--;\n\n    *ptr++ = string->colour[0] + ((uint8_t) (string->animationVector[0] * (float) string->animationIndexes[i]));\n    *ptr++ = string->colour[1] + ((uint8_t) (string->animationVector[1] * (float) string->animationIndexes[i]));\n    *ptr++ = string->colour[2] + ((uint8_t) (string->animationVector[2] * (float) string->animationIndexes[i]));\n  }\n\n  // for (int i = 0; i < 3; i++)\n  // {\n  //   if (string->animating == FORWARD)\n  //     string->colour[i] += string->animationVector[i];\n  //   else\n  //     string->colour[i] -= string->animationVector[i];\n  // }\n\n  // // write buffer for leds\n  // ptr = string->buffer;\n  // for (int j = 0; j < string->numLeds; j++)\n  // {\n  //   for (int i = 0; i < 3; i++)\n  //   { \n  //     *ptr++ = (uint8_t) string->colour[i];\n  //   }\n  // }\n\n  showLeds(string);\n}",
+			"file": "lib/ws2812b/ledString.c",
+			"file_size": 8851,
+			"file_write_time": 131597460212301388,
+			"settings":
+			{
+				"buffer_size": 6287,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "lib/ws2812b/ledString.h",
+			"settings":
+			{
+				"buffer_size": 1288,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "lib/ws2812b/ws2812b.c",
+			"settings":
+			{
+				"buffer_size": 5411,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "lib/ws2812b/ws2812b.h",
+			"settings":
+			{
+				"buffer_size": 160,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/C++/C++ Single File.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"Traditional"
+			]
+		],
+		[
+			[
+				[
+					"Packages/LaTeXing/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXing/LaTeX.sublime-build",
+					"Clean up Files"
+				]
+			],
+			[
+				"Packages/LaTeXing/LaTeX.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 302.0,
+		"last_filter": "make",
+		"selected_items":
+		[
+			[
+				"make",
+				"Build With: Make"
+			],
+			[
+				"",
+				"Build With: Make"
+			],
+			[
+				"c",
+				"Set Syntax: C"
+			],
+			[
+				"stk",
+				"Set Syntax: Makefile"
+			],
+			[
+				"\\",
+				"Snippet: #!/usr/bin/env"
+			],
+			[
+				"clean",
+				"Build With: Make - Clean"
+			],
+			[
+				"build ",
+				"Build With: Make"
+			],
+			[
+				"log",
+				"Git: Log All"
+			],
+			[
+				"pull",
+				"Git: Pull"
+			],
+			[
+				"git commit",
+				"Git: Commit"
+			],
+			[
+				"git add",
+				"Git: Add All"
+			],
+			[
+				"git pul",
+				"Git: Pull"
+			],
+			[
+				"git add ",
+				"Git: Add All"
+			],
+			[
+				"git pull",
+				"Git: Pull"
+			],
+			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"git commit ",
+				"Git: Commit"
+			],
+			[
+				"diff",
+				"Git: Diff Current File"
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"git comi",
+				"Git: Commit"
+			],
+			[
+				"git add al",
+				"Git: Add All"
+			],
+			[
+				"gitpush",
+				"Git: Push"
+			],
+			[
+				"git add all",
+				"Git: Add All"
+			],
+			[
+				"git diff curr",
+				"Git: Diff Current File"
+			],
+			[
+				"git log",
+				"Git: Log All"
+			],
+			[
+				"git stash",
+				"Git: Stash Changes"
+			],
+			[
+				"git diff curre",
+				"Git: Diff Current File"
+			],
+			[
+				"git add a",
+				"Git: Add All"
+			],
+			[
+				"packageinstall",
+				"Package Control: Install Package"
+			],
+			[
+				"git addall",
+				"Git: Add All"
+			],
+			[
+				"gt commit",
+				"Git: Commit"
+			],
+			[
+				"package update",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"git log a",
+				"Git: Log All"
+			],
+			[
+				"build",
+				"Build With: LaTeX"
+			],
+			[
+				"git commt",
+				"Git: Amend Commit"
+			],
+			[
+				"git all ",
+				"Git: Add All"
+			],
+			[
+				"git log ",
+				"Git: Log All"
+			],
+			[
+				"git adda ",
+				"Git: Add All"
+			],
+			[
+				"git comm",
+				"Git: Commit"
+			],
+			[
+				"git add cur",
+				"Git: Add Current File"
+			],
+			[
+				"git add cu",
+				"Git: Add Current File"
+			],
+			[
+				"git branch",
+				"Git: Change Branch"
+			],
+			[
+				"git merge ",
+				"Git: Merge Branch"
+			],
+			[
+				"git merge",
+				"Git: Merge Branch"
+			],
+			[
+				"git change",
+				"Git: Change Branch"
+			],
+			[
+				"git push tags",
+				"Git: Push Tags"
+			],
+			[
+				"new tag",
+				"Git: New Tag"
+			],
+			[
+				"tags",
+				"Git: Show Tags"
+			],
+			[
+				"git new tag",
+				"Git: New Tag"
+			],
+			[
+				"git log curren",
+				"Git: Log Current File"
+			],
+			[
+				"diff current",
+				"Git: Diff Current File"
+			],
+			[
+				"git log curr",
+				"Git: Log Current File"
+			],
+			[
+				"git log cur",
+				"Git: Log Current File"
+			],
+			[
+				"git graph",
+				"Git: Graph All"
+			],
+			[
+				"change",
+				"Git: Change Branch"
+			],
+			[
+				"remote",
+				"Git: Track Remote Branch"
+			],
+			[
+				"branch",
+				"Git: Change Branch"
+			],
+			[
+				"git push ",
+				"Git: Push"
+			],
+			[
+				"git tag ",
+				"Git: New Tag"
+			],
+			[
+				"git diff current",
+				"Git: Diff Current File"
+			],
+			[
+				"git ",
+				"Git: Diff Current File"
+			],
+			[
+				"git show tags",
+				"Git: Show Tags"
+			],
+			[
+				"git tag",
+				"Git: Delete Tag"
+			],
+			[
+				"git showtag",
+				"Git: Show Tags"
+			],
+			[
+				"git tag new",
+				"Git: Diff Staged Files (Ignore Whitespace)"
+			],
+			[
+				"set syntax latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Channel"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 420.0
+	},
+	"console":
+	{
+		"height": 153.0,
+		"history":
+		[
+			"sublime.log_commands(True)",
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": false,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/circular_buffer",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/uart",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/ws2812b"
+	],
+	"file_history":
+	[
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/uart/uart.c",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/uart/uart.h",
+		"/C/Users/alwynster/git/elasticnodetest/main.c",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/circular_buffer/circular_buffer.h",
+		"/C/Users/alwynster/git/elasticnodetest/lib/io/interrupts.c",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/circular_buffer/circular_buffer.c",
+		"/C/Users/alwynster/git/elasticnodetest/lib/io/leds.h",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/ws2812b.c.bk",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/ws2812b.h",
+		"/C/Users/alwynster/git/comptroller/ComptrollerMCU/lib/ws2812b.c",
+		"/C/Users/alwynster/git/elasticnodehardware/elasticNode.sch",
+		"/C/Users/alwynster/git/elasticnodehardware/elasticNode.brd",
+		"/C/Users/alwynster/git/percomdemo2017/percom2017.sublime-project",
+		"/C/Users/alwynster/git/qmk/keyboards/satan/satan.h",
+		"/C/Users/alwynster/git/sensys2017/notes.txt",
+		"/C/Users/alwynster/git/qmk/tmk_core/common/backlight.c",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemUsage.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemArchitecture.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Evaluation.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Introduction.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/RelatedWork.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemOverview.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/SystemModel.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/main.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/data/executionTimes.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/bib/local.bib",
+		"/C/Users/alwynster/git/computing-frontiers-2017/.gitignore",
+		"/C/Users/alwynster/git/computing-frontiers-2017/bib/library.bib",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Conclusions.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/ex6/ex6.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/ex4/ex4.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/ex2/ex2.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/old_experiments/ex2/ex2.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/email comments.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/main.bbl",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/ProgrammingModel.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/content/Requirements.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/discussion.txt",
+		"/C/Users/alwynster/git/computing-frontiers-2017/data/overheads.tex",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/explot.py",
+		"/C/Users/alwynster/git/computing-frontiers-2017/experiments/old_experiments/ex4/ex4.txt"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 104.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"malloc",
+			"numleds",
+			"b_inc",
+			"60",
+			"numleds",
+			"steps",
+			"mate(&leds1);\n\t\t\tledAnimate(&leds2);\n\t\t\tledAnimate(&leds3);\n\n\t\t\t_delay_ms",
+			"initledsintr",
+			"receive",
+			"debug",
+			"setled",
+			"led",
+			"debug",
+			"sendingBuf",
+			"sendingbuf",
+			"sources",
+			"port",
+			"headers",
+			"= ",
+			"flash_stk",
+			"-P ",
+			"program: ",
+			"flash:"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Makefile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8868,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4886,
+								4886
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2268.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "main.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3062,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1836,
+								1836
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1512.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/ws2812b/ledString.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6287,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3098,
+								3098
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1620.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/ws2812b/ledString.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1288,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								865,
+								865
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 193.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/ws2812b/ws2812b.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5411,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5327,
+								5327
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1859.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/ws2812b/ws2812b.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 160,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								146,
+								146
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 108.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 39.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 170.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 142.0
+	},
+	"output.latextools":
+	{
+		"height": 142.0
+	},
+	"pinned_build_system": "",
+	"project": "comptroller.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"ledstring",
+				"lib\\ws2812b\\ledString.h"
+			],
+			[
+				"",
+				"main.c"
+			],
+			[
+				"leds",
+				"lib\\ws2812b\\ledString.c"
+			],
+			[
+				"led",
+				"lib\\ws2812b\\ledString.c"
+			],
+			[
+				"percom",
+				"percomdemo2017.tex"
+			],
+			[
+				"body",
+				"body.tex"
+			],
+			[
+				"abstr",
+				"abstract.tex"
+			],
+			[
+				"paper.",
+				"paper.tex"
+			],
+			[
+				"abstra",
+				"abstract.tex"
+			],
+			[
+				"notes",
+				"notes_v1.txt"
+			],
+			[
+				"txt",
+				"notes.txt"
+			],
+			[
+				"backlight",
+				"tmk_core\\common\\backlight.c"
+			],
+			[
+				"main",
+				"main.tex"
+			],
+			[
+				"overv",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"model",
+				"content\\SystemModel.tex"
+			],
+			[
+				"intro",
+				"content\\Introduction.tex"
+			],
+			[
+				"rel",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"evaluat",
+				"content\\Evaluation.tex"
+			],
+			[
+				"evlu",
+				"content\\Evaluation.tex"
+			],
+			[
+				"usage",
+				"content\\SystemUsage.tex"
+			],
+			[
+				"archi",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"realte",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"overview",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"realted",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"intr",
+				"content\\Introduction.tex"
+			],
+			[
+				"arch",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"con",
+				"content\\Conclusions.tex"
+			],
+			[
+				"evaluation",
+				"content\\Evaluation.tex"
+			],
+			[
+				"over",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"relate",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"rea",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"local",
+				"bib\\local.bib"
+			],
+			[
+				"loal",
+				"bib\\local.bib"
+			],
+			[
+				"related",
+				"content\\RelatedWork.tex"
+			],
+			[
+				"arc",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"main.te",
+				"main.tex"
+			],
+			[
+				"eval",
+				"content\\Evaluation.tex"
+			],
+			[
+				"lib",
+				"bib\\library.bib"
+			],
+			[
+				"librar",
+				"bib\\library.bib"
+			],
+			[
+				"eva",
+				"content\\Evaluation.tex"
+			],
+			[
+				"conclu",
+				"content\\Conclusions.tex"
+			],
+			[
+				"conc",
+				"content\\Conclusions.tex"
+			],
+			[
+				"exec",
+				"data\\executionTimes.tex"
+			],
+			[
+				"comments",
+				"content\\email comments.txt"
+			],
+			[
+				"oldex4",
+				"experiments\\old_experiments\\ex4\\ex4.txt"
+			],
+			[
+				"ex4",
+				"experiments\\ex4\\ex4.txt"
+			],
+			[
+				"ex2.",
+				"experiments\\ex2\\ex2.txt"
+			],
+			[
+				"expl",
+				"experiments\\explot.py"
+			],
+			[
+				"reqre",
+				"content\\Requirements.tex"
+			],
+			[
+				"evalu",
+				"content\\Evaluation.tex"
+			],
+			[
+				"ev",
+				"content\\Evaluation.tex"
+			],
+			[
+				"req",
+				"content\\Requirements.tex"
+			],
+			[
+				"require",
+				"content\\Requirements.tex"
+			],
+			[
+				"systemmod",
+				"content\\SystemModel.tex"
+			],
+			[
+				"main.",
+				"main.tex"
+			],
+			[
+				"overi",
+				"content\\SystemOverview.tex"
+			],
+			[
+				"mode",
+				"content\\SystemModel.tex"
+			],
+			[
+				"programm",
+				"content\\ProgrammingModel.tex"
+			],
+			[
+				"evaluate",
+				"content\\Evaluation.tex"
+			],
+			[
+				"programming",
+				"content\\ProgrammingModel.tex"
+			],
+			[
+				"systemmodel",
+				"content\\SystemModel.tex"
+			],
+			[
+				"programmingmodel.t",
+				"content\\ProgrammingModel.tex"
+			],
+			[
+				"systemar",
+				"content\\SystemArchitecture.tex"
+			],
+			[
+				"systemc",
+				"content\\SystemArchitecture.tex"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 235.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

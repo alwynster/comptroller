@@ -268,20 +268,26 @@ CString MSIAfterBurnerPlugin::DumpEntry(LPMAHM_SHARED_MEMORY_ENTRY lpEntry, Meas
 	{
 		if (strcmp(lpEntry->szSrcName, "Motherboard temperature") == 0)
 			destination->motherboardTemperature = lpEntry->data;
-		else if (strcmp(lpEntry->szSrcName, "GPU1 temperature") == 0)
-			destination->gpuTemp = lpEntry->data;		
-		else if (strcmp(lpEntry->szSrcName, "GPU1 memory temperature") == 0)
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 temperature") == 0) || (strcmp(lpEntry->szSrcName, "GPU temperature") == 0))
+			destination->gpuTemp = lpEntry->data;
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 memory temperature") == 0) || (strcmp(lpEntry->szSrcName, "Memory temperature") == 0))
 			destination->gpuMemoryTemp = lpEntry->data;
-		else if (strcmp(lpEntry->szSrcName, "GPU1 usage") == 0)
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 usage") == 0) || (strcmp(lpEntry->szSrcName, "GPU usage") == 0))
 			destination->gpuUsage = lpEntry->data;
-		else if (strcmp(lpEntry->szSrcName, "GPU1 power") == 0)
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 power") == 0) || (strcmp(lpEntry->szSrcName, "GPU power") == 0))
 			destination->gpuPower = lpEntry->data;
-		else if (strcmp(lpEntry->szSrcName, "GPU1 memory usage") == 0)
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 memory usage") == 0) || (strcmp(lpEntry->szSrcName, "Memory usage") == 0))
 			destination->gpuMemory = lpEntry->data;
-		else if (strcmp(lpEntry->szSrcName, "GPU1 core clock") == 0)
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 core clock") == 0) || (strcmp(lpEntry->szSrcName, "Core clock") == 0))
 			destination->gpuCore = lpEntry->data;
-		else if (strcmp(lpEntry->szSrcName, "GPU1 memory clock") == 0)
+		else if ((strcmp(lpEntry->szSrcName, "GPU1 memory clock") == 0) || (strcmp(lpEntry->szSrcName, "Memory clock") == 0))
 			destination->gpuMemoryClock = lpEntry->data;
+		else if (strcmp(lpEntry->szSrcName, "GPU voltage") == 0)
+			destination->gpuVoltage = lpEntry->data;
+		else if (strcmp(lpEntry->szSrcName, "Power") == 0)
+			destination->gpuPower = lpEntry->data;
+		else if (strcmp(lpEntry->szSrcName, "Fan tachometer") == 0)
+			destination->gpuFanPwm = lpEntry->data;
 		else if (strcmp(lpEntry->szSrcName, "CPU temperature") == 0)
 			destination->cpuTemp = lpEntry->data;
 		else if (strcmp(lpEntry->szSrcName, "CPU usage") == 0)
@@ -296,6 +302,7 @@ CString MSIAfterBurnerPlugin::DumpEntry(LPMAHM_SHARED_MEMORY_ENTRY lpEntry, Meas
 		strValue += lpEntry->szLocalizedSrcUnits; // this is the value
 	}
 
+	printf("\n%s\n", strValue);
 	CString strEntry;
 
 	strEntry.Format("%-32s\t : %-16s\t", lpEntry->szLocalizedSrcName, strValue);
