@@ -15,6 +15,8 @@
 #include "lib\LED\LEDController.h"
 #include "lib\LED\WS2812_Definitions.h"
 
+#include "lib\Asus\Asus.h"
+
 int main()
 {
 	printf("Test\n");
@@ -57,6 +59,10 @@ int main()
 	if (razer.HasRazer()) {
 		razer.StaticColour(RGB(255, 255, 255));
 	}
+
+	printf("Starting ASUS plugin\n");
+	Asus asus;
+	asus.StaticColour(RGB(255, 255, 255));
 
 	scanf_s("Enter");
 
