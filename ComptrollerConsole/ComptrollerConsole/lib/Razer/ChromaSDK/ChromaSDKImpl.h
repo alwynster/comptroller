@@ -44,8 +44,10 @@ public:
     void CreateEffectGroup(RZEFFECTID *pGroupEffectId, BOOL Repeat=FALSE);
     void AddToGroup(RZEFFECTID GroupEffectId, RZEFFECTID EffectId, LONG DelayMS=100);
 
+	HMODULE m_hModule;
+
 private:
-    HMODULE m_hModule;
+    
     HANDLE m_hEvent;
 };
 

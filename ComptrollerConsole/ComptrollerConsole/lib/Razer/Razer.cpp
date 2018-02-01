@@ -54,3 +54,14 @@ void Razer::StaticColour(unsigned long colour)
 
 	g_ChromaSDKImpl.SetEffectImpl(EffectId);
 }
+
+bool Razer::HasRazer(){
+
+	if (g_ChromaSDKImpl.m_hModule == NULL) {
+		return 0;
+	}
+	else {
+
+		return 1;
+	}
+}
