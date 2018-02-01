@@ -1,4 +1,4 @@
-// ComptrollerConsole.cpp: Definiert den Einstiegspunkt für die Konsolenanwendung.
+// ComptrollerConsole.cpp: Definiert den Einstiegspunkt fÃ¼r die Konsolenanwendung.
 //
 
 #include "StdAfx.h"
