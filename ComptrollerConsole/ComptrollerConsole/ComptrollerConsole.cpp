@@ -61,7 +61,8 @@ int main()
 	scanf_s("Enter");
 
 
-
+	// turn off all leds before closing
+	ledString3.staticColour(BLACK);
 	CloseUart();
 
 	return 0;
