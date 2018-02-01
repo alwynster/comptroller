@@ -31,7 +31,6 @@ HMODULE hLib = nullptr;
 
 Asus::Asus() {
 
-	SetErrorMode(0);
 	hLib = LoadLibrary("AURA_SDK.dll");
 
 
