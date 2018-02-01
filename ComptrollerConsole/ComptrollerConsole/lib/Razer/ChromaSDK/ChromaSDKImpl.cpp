@@ -81,7 +81,7 @@ DWORD WINAPI Thread_RenderEffects(LPVOID lpParameter)
     RZEFFECTID *pEffectId = (RZEFFECTID*)lpParameter;
 
     auto iterator = g_Effects.find(*pEffectId);
-    if(iterator != g_Effects.end())
+    if((iterator != g_Effects.end()) && (&iterator->second.thread == 0))
     {
         EFFECTDATATYPE *pEffectData = &iterator->second;
 
@@ -339,7 +339,7 @@ void CChromaSDKImpl::CreateEffectGroup(RZEFFECTID *pGroupEffectId, BOOL Repeat)
 void CChromaSDKImpl::AddToGroup(RZEFFECTID GroupEffectId, RZEFFECTID EffectId, LONG DelayMS)
 {
     auto iterator = g_Effects.find(GroupEffectId);
-    if(iterator != g_Effects.end())
+    if((iterator != g_Effects.end()) && (&iterator->second.thread == 0))
     {
         LONG lIndex = iterator->second.numEffects;
 
