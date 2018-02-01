@@ -346,3 +346,6 @@ OpenCover/
 
 # Azure Stream Analytics local run output 
 ASALocalRun/
+
+# VC Project files
+*.vcxproj.filters

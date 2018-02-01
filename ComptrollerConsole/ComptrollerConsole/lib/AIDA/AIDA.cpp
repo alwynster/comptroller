@@ -128,7 +128,7 @@ void AIDA::FetchReadings(Measurements *destination)
 
 		tinyxml2::XMLDocument doc;
 		doc.Parse(memory);
-		doc.Print();
+		//doc.Print();
 
 		float value;
 		std::string name;
