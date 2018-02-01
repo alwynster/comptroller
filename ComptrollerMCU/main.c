@@ -10,9 +10,9 @@ int main(void)
 {
 	// enable random pins for single leds
 	DDRD |= _BV(3);
-	PORTD &= ~_BV(3);
-	DDRD |= _BV(5);
-	PORTD |= _BV(5);
+	PORTD |= _BV(3);
+	DDRD |= _BV(4);
+	PORTD &= ~_BV(4);
 
 	uartInit(&uartReceive);
 	uartWriteString("Starting...");
@@ -21,16 +21,20 @@ int main(void)
 	ledString leds1, leds2, leds3;
 	initLedString(&leds1, &DDRC, &PORTC, 0);
 	initLedString(&leds2, &DDRB, &PORTB, 3);
-	initLedString(&leds3, &DDRD, &PORTD, 6);
+	initLedString(&leds3, &DDRD, &PORTD, 2);
 
-	// ledStatic(&leds1, 0, 0, 0);
-	// ledStatic(&leds2, 0, 0, 0);
-	// ledStatic(&leds3, 0, 0, 0);
+	updateNumLeds(&leds1, 2);
+	updateNumLeds(&leds2, 2);
+	updateNumLeds(&leds3, 2);
 
-	// leds1.animationLength = 6;
-	// leds1.animationSteps = 1000;
-	// updateNumLeds(&leds1, 6);
-	// ledWave(&leds1, 100, 0, 1, 1, 0, 100);
+	// ledStatic(&leds1, 0, 0, 255);
+	// ledStatic(&leds2, 0, 255, 0);
+	// ledStatic(&leds3, 255, 0, 0);
+
+	leds3.animationLength = 2;
+	leds3.animationSteps = 1000;
+	updateNumLeds(&leds3, 2);
+	ledWave(&leds3, 100, 0, 1, 1, 0, 100);
 
 // void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 
@@ -137,12 +141,12 @@ int main(void)
 			ledAnimate(&leds1);
 			if (uartAvailable())
 				continue;
-			// ledAnimate(&leds2);
-			// if (uartAvailable())
-			// 	continue;
-			// ledAnimate(&leds3);
-			// if (uartAvailable())
-			// 	continue;
+			ledAnimate(&leds2);
+			if (uartAvailable())
+				continue;
+			ledAnimate(&leds3);
+			if (uartAvailable())
+				continue;
 		}
 	}
 	return 0;

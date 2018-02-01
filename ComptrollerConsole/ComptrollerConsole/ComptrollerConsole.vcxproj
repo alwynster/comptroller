@@ -151,7 +151,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ComptrollerConsole.cpp" />
     <ClCompile Include="lib\AIDA\AIDA.cpp" />
     <ClCompile Include="lib\Asus\Asus.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
@@ -163,6 +162,7 @@
     <ClCompile Include="lib\Razer\Razer.cpp" />
     <ClCompile Include="lib\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="lib\UART\UART.cpp" />
+    <ClCompile Include="ComptrollerConsole.cpp" />
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>

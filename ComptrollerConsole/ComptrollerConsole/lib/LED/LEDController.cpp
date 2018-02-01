@@ -1,6 +1,7 @@
 #include "LEDController.h"
 #include "LED.h"
 #include "../UART/UART.h"
+#include "../LED/WS2812_Definitions.h"
 #include <iostream>   
 //#include <stdlib.h>
 #include <cstdlib>
@@ -18,7 +19,7 @@ LEDController::LEDController(uint8_t index, uint16_t numLeds)
 
 LEDController::~LEDController()
 {
-
+	staticColour(BLACK);
 }
 
 
