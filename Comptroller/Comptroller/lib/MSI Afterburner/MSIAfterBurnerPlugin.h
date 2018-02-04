@@ -36,7 +36,7 @@ public:
 
 	//enum { IDD = IDD_MSI_AFTERBURNER_PLUGIN };
 
-private:
+public:
 	Measurements ^ measurements;
 // Implementation
 protected:

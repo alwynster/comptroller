@@ -135,6 +135,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\Configuration\Configuration.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
     <ClCompile Include="lib\LED\LEDController.cpp" />
     <ClCompile Include="lib\Measurements\Measurements.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="MyForm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\Configuration\Configuration.h" />
     <ClInclude Include="lib\LED\LED.h" />
     <ClInclude Include="lib\LED\LEDController.h" />
     <ClInclude Include="lib\LED\WS2812_Definitions.h" />

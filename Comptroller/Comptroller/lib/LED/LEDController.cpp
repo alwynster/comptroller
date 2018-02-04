@@ -16,7 +16,7 @@ LEDController::LEDController(uint8_t index, uint16_t numLeds)
 
 	this->setNumLeds();
 
-	this->leds = gcnew LED();
+	this->leds = gcnew Colour();
 }
 
 LEDController::~LEDController()
@@ -40,9 +40,15 @@ void LEDController::setNumLeds(void)
 	delete[] buffer;
 }
 
+
+void LEDController::staticColour(Colour ^colour)
+{
+	this->staticColour(colour->r, colour->g, colour->b);
+}
+
 void LEDController::staticColour(uint32_t colour)
 {
-	this->staticColour((colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff);
+	this->staticColour((colour >> 0) & 0xff, (colour >> 8) & 0xff, (colour >> 16) & 0xff);
 }
 
 void LEDController::staticColour(uint8_t red, uint8_t green, uint8_t blue)

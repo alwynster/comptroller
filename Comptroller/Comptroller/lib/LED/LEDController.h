@@ -12,6 +12,7 @@ public:
 	LEDController(uint8_t index, uint16_t numLeds);
 	~LEDController();
 	void setNumLeds(void);
+	void staticColour(Colour ^colour);
 	void staticColour(uint32_t colour);
 	void staticColour(uint8_t red, uint8_t green, uint8_t blue);
 	void breathingColour(uint16_t steps, uint32_t colour1, uint32_t colour2);
@@ -23,7 +24,7 @@ protected:
 	uint8_t numLeds, index;
 
 	//uint8_t *buffer;
-	LED ^leds;
+	Colour ^leds;
 
 	//void clearBuffer(void);
 
