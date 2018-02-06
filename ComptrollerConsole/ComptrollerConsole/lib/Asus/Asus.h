@@ -8,6 +8,8 @@ public:
 	Asus();
 	~Asus();
 
-	void StaticColour(unsigned long colour);
+	void StaticColour(BYTE* color);
+	void AsusTest();
+	void SetMoboColor();
 };
 

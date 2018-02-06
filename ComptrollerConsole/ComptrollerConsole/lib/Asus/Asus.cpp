@@ -62,6 +62,33 @@ Asus::Asus() {
 	(FARPROC&)SetRogMouseColor = GetProcAddress(hLib, "SetRogMouseColor");
 	(FARPROC&)RogMouseLedCount = GetProcAddress(hLib, "RogMouseLedCount");
 
+}
+
+Asus::~Asus()
+{
+	FreeLibrary(hLib);
+}
+
+void Asus::StaticColour(BYTE* color) {
+
+	DWORD count = EnumerateGPU(NULL, 0);
+	if (count > 0) {
+
+		GPULightControl* GpuLightCtrl = new GPULightControl[count];
+
+		EnumerateGPU(GpuLightCtrl, count);
+		DWORD t = GetGPULedCount(GpuLightCtrl[0]);
+		SetGPUMode(GpuLightCtrl[0], 1);
+
+		SetGPUColor(GpuLightCtrl[0], color, t * 3);
+	}
+
+	//Use this to run the Asus Test Software
+	//AsusTest();
+}
+
+void Asus::AsusTest() {
+
 	int loop_start_count = GetTickCount();
 
 	printf(" 0: mb demo.\n 1: vga demo.\n 2: kb demo.\n 3: mouse demo.\n");
@@ -266,28 +293,8 @@ Asus::Asus() {
 	FreeLibrary(hLib);
 }
 
-Asus::~Asus()
-{
-	FreeLibrary(hLib);
+void Asus::SetMoboColor() {
+
+
 }
 
-void Asus::StaticColour(unsigned long colour) {
-
-	/*DWORD count = EnumerateGPU(NULL, 0);
-	if (count > 0) {
-
-		GPULightControl* GpuLightCtrl = new GPULightControl[count];
-
-		EnumerateGPU(GpuLightCtrl, count);
-		DWORD t = GetGPULedCount(GpuLightCtrl[0]);
-		SetGPUMode(GpuLightCtrl[0], 1);
-		BYTE *color = new BYTE[t * 3];
-		ZeroMemory(color, t * 3);
-
-		color[0] = 0xAA;
-		color[1] = 0x11;
-		color[2] = 0x55;
-
-		SetGPUColor(GpuLightCtrl[0], color, t * 3);
-	}*/
-}

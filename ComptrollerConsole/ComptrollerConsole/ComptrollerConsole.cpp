@@ -55,14 +55,25 @@ int main()
 
 	printf("Starting razer plugin\n");
 
+	int red, green, blue;
+	red = 0;
+	green = 0;
+	blue = 255;
+
 	Razer razer;
 	if (razer.HasRazer()) {
-		razer.StaticColour(RGB(255, 255, 255));
+		razer.StaticColour(RGB(red, green, blue));
 	}
 
 	printf("Starting ASUS plugin\n");
 	Asus asus;
-	asus.StaticColour(RGB(255, 255, 255));
+
+	BYTE color[3];
+	color[0] = char(red);
+	color[1] = char(green);
+	color[2] = char(blue);
+
+	asus.StaticColour(&color[0]);
 
 	scanf_s("Enter");
 
