@@ -135,6 +135,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\Asus\Asus.cpp" />
     <ClCompile Include="lib\Configuration\Configuration.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
     <ClCompile Include="lib\LED\LEDController.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="MyForm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\Asus\Asus.h" />
     <ClInclude Include="lib\Configuration\Configuration.h" />
     <ClInclude Include="lib\LED\LED.h" />
     <ClInclude Include="lib\LED\LEDController.h" />

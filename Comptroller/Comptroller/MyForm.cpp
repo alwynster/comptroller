@@ -109,6 +109,11 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 		ledString1->staticColour(colour);
 		ledString3->staticColour(colour);
 	}
+	if (config->asus)
+	{
+		asus->StaticColour(colour);
+
+	}
 }
 
 void Comptroller::MyForm::updateColourBars(Colour ^ colour)
@@ -152,6 +157,9 @@ void Comptroller::MyForm::updateComponents()
 	if (this->config->razer)
 		if (razer == nullptr)
 			razer = gcnew Razer();
+	if (this->config->asus)
+		if (asus == nullptr)
+			asus = gcnew Asus();
 }
 
 System::Void Comptroller::MyForm::tempControlUpdate(System::Object^  sender, System::EventArgs^  e)

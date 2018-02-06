@@ -5,6 +5,7 @@
 #include "lib\UART\UART.h"
 #include "lib\LED\LED.h"
 #include "lib\Razer\Razer.h"
+#include "lib\Asus\Asus.h"
 //
 //#include "lib\Measurements\Measurements.h"
 //#include "lib\LED\LED.h"
@@ -510,6 +511,7 @@ namespace Comptroller {
 
 	public: LEDController ^ledString3, ^ledString1;
 	public: Razer ^ razer;
+	public: Asus ^ asus;
 
 	private: System::Void measureButton_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void MyForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
