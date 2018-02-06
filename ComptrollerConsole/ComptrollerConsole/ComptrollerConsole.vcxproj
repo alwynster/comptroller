@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\AIDA\AIDA.cpp" />
+    <ClCompile Include="lib\Asus\Asus.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
     <ClCompile Include="lib\LED\LEDController.cpp" />
     <ClCompile Include="lib\Measurements\Measurements.cpp" />
@@ -167,6 +168,7 @@
   <ItemGroup>
     <ClInclude Include="lib\AIDA\AIDA.h" />
     <ClInclude Include="lib\AIDA\MAHMSharedMemory.h" />
+    <ClInclude Include="lib\Asus\Asus.h" />
     <ClInclude Include="lib\LED\LED.h" />
     <ClInclude Include="lib\LED\LEDController.h" />
     <ClInclude Include="lib\LED\WS2812_Definitions.h" />
