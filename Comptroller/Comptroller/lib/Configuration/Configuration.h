@@ -15,6 +15,8 @@ public:
 	float minTemp, maxTemp;
 	Colour ^minColour, ^maxColour;
 
+	int selectedQMK;
+
 public:
 	Config();
 	~Config();

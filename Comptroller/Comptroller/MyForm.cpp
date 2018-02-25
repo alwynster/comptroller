@@ -114,6 +114,10 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 		asus->StaticColour(colour);
 
 	}
+	if (config->qmk)
+	{
+		qmk->staticColour(colour);
+	}
 }
 
 void Comptroller::MyForm::updateColourBars(Colour ^ colour)
@@ -144,11 +148,15 @@ void Comptroller::MyForm::initComponents()
 	this->ledStringsCheckBox->Checked = config->ledStrings;
 	this->asusCheckBox->Checked = config->asus;
 	this->razerCheckBox->Checked = config->razer;
+
+	this->guiInitialised = true;
 }
 
 // gui to active
 void Comptroller::MyForm::updateComponents()
 {
+	if (!guiInitialised) return;
+
 	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked);
 
 	if (this->config->ledStrings)
@@ -171,8 +179,29 @@ System::Void Comptroller::MyForm::tempControlUpdate(System::Object^  sender, Sys
 	//this->tempControlList->Items = 
 }
 
+// config to gui/active
+void Comptroller::MyForm::initQMK()
+{
+	this->qmk->FindMidiPorts();
+
+	this->qmkCheckBox->Checked = this->config->qmk;
+	this->qmkList->Enabled = this->config->qmk;
+
+	this->qmkList->Items->Clear();
+	for (int i = 0; i < this->qmk->midiports->Length; i++)
+	{
+		this->qmkList->Items->Add(this->qmk->midiports[i]);
+	}
+	this->qmkList->SelectedIndex = this->config->selectedQMK;
+
+	this->qmk->Connect(this->qmkList->SelectedIndex);
+	//this->tempControlInitialised = true;
+}
+
 void Comptroller::MyForm::initTempControl()
 {
+	this->manualControlBox->Checked = this->config->manualControl;
+
 	this->tempControlCheckBox->Checked = this->config->tempControl;
 	this->tempControlList->Enabled = this->config->tempControl;
 
@@ -182,14 +211,13 @@ void Comptroller::MyForm::initTempControl()
 		this->tempControlList->Items->Add(this->config->tempControlSources[i]);
 	}
 	this->tempControlList->SelectedIndex = this->config->selectedTempControlSource;
-	this->tempControlInitialised = true;
 }
 
 // gui to active/config
 void Comptroller::MyForm::updateTempControl()
 {
 	// do not update before initialised
-	if (!this->tempControlInitialised)
+	if (!this->guiInitialised)
 		return;
 
 	bool manual = this->manualControlBox->Checked;

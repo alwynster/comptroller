@@ -7,7 +7,8 @@ bool chooseMidiPort(RtMidiOut ^rtmidi);
 
 QMK::QMK()
 {
-	this->Connect("hint");
+	this->midiout = gcnew RtMidiOut(RtMidi::Api::WINDOWS_MM, "QMK");
+	//this->FindMidiPorts();
 }
 
 QMK::~QMK()
@@ -16,7 +17,42 @@ QMK::~QMK()
 	//delete this->midiin;
 }
 
-void QMK::Connect(System::String ^ hint)
+void QMK::FindMidiPorts()
+{
+	if (this->midiports != nullptr)
+		delete this->midiports;
+
+	std::string portName;
+	unsigned int i = 0, nPorts = this->midiout->getPortCount();
+
+	this->midiports = gcnew array<System::String ^>(nPorts);
+
+	if (nPorts == 0) {
+		std::cout << "No output ports available!" << std::endl;
+		return;
+	}
+
+	if (nPorts == 1) {
+		std::cout << "\nOpening " << this->midiout->getPortName(0) << std::endl;
+	}
+	else {
+		for (i = 0; i<nPorts; i++) {
+			portName = this->midiout->getPortName(i);
+			this->midiports[i] = gcnew System::String(portName.c_str());
+			//std::cout << "  Output port #" << i << ": " << portName << '\n';
+		}
+
+		//do {
+			//std::cout << "\nChoose a port number: ";
+			//std::cin >> i;
+		//} while (i >= nPorts);
+	}
+
+	//std::cout << std::endl;
+	//this->midiout->openPort(i, "RTMidi");
+}
+
+void QMK::Connect(int selectedDevice)
 {
 	//RtMidiOut ^midiout;
 	//RtMidiIn *midiin = 0;
@@ -29,22 +65,23 @@ void QMK::Connect(System::String ^ hint)
 	nBytes = 10;
 
 	// RtMidiOut and RtMidiIn constructors
-	try {
-		this->midiout = gcnew RtMidiOut(RtMidi::Api::WINDOWS_MM, "RtMidi Output Client");
-		//midiin = new RtMidiIn();
-	}
-	catch (RtMidiError &error) {
-		error.printMessage();
-		return;
-		//goto cleanup;
-	}
+	//try {
+	//	this->midiout = gcnew RtMidiOut(RtMidi::Api::WINDOWS_MM, "RtMidi Output Client");
+	//	//midiin = new RtMidiIn();
+	//}
+	//catch (RtMidiError &error) {
+	//	error.printMessage();
+	//	return;
+	//	//goto cleanup;
+	//}
 
 	// Don't ignore sysex, timing, or active sensing messages.
 	//midiin->ignoreTypes(false, true, true);
 
 	try {
 		//if (chooseMidiPort(midiin) == false) goto cleanup;
-		if (chooseMidiPort(midiout) == false) return;
+		//if (chooseMidiPort(midiout) == false) return;
+		this->midiout->openPort(selectedDevice, "RTMidi");
 	}
 	catch (RtMidiError &error) {
 		error.printMessage();
@@ -54,72 +91,53 @@ void QMK::Connect(System::String ^ hint)
 
 	//midiin->setCallback(&mycallback);
 
-	message.push_back(0xF6);
-	midiout->sendMessage(&message);
-	//SLEEP(500); // pause a little
+	//Sysex::MT_SET_DATA(Sysex::DT::HANDSHAKE, nullptr, 0, this->midiout);
 
-				// Create a long sysex message of numbered bytes and send it out ... twice.
-	for (int n = 0; n<2; n++) {
-		message.clear();
-		message.push_back(240);
-		for (i = 0; i<nBytes; i++)
-			message.push_back(i % 128);
-		message.push_back(247);
-		midiout->sendMessage(&message);
+	//message.push_back(0xF6);
+	//midiout->sendMessage(&message);
+	////SLEEP(500); // pause a little
 
-		//SLEEP(500); // pause a little
-	}
+	//			// Create a long sysex message of numbered bytes and send it out ... twice.
+	//for (int n = 0; n<2; n++) {
+	//	message.clear();
+	//	message.push_back(240);
+	//	for (i = 0; i<nBytes; i++)
+	//		message.push_back(i % 128);
+	//	message.push_back(247);
+	//	midiout->sendMessage(&message);
+
+	//	//SLEEP(500); // pause a little
+	//}
 
 }
 
-bool chooseMidiPort(RtMidiOut ^rtmidi)
+void QMK::staticColour(Colour ^colour)
 {
-	bool isInput = false;
-	//if (typeid(rtmidi) == typeid(RtMidiIn))
-	//	isInput = true;
+	float r_float = (float)(colour->r / 255.0f);
+	float g_float = (float)(colour->g / 255.0f);
+	float b_float = (float)(colour->b / 255.0f);
 
-	/*if (isInput)
-		std::cout << "\nWould you like to open a virtual input port? [y/N] ";
-	else
-		std::cout << "\nWould you like to open a virtual output port? [y/N] ";*/
+	float h_float, s_float, v_float;
 
-	//std::string keyHit;
-	//std::getline(std::cin, keyHit);
-	//if (keyHit == "y") {
-	//	rtmidi->openVirtualPort();
-	//	return true;
-	//}
+	uint16_t hue;
+	uint8_t sat, val;
 
-	std::string portName;
-	unsigned int i = 0, nPorts = rtmidi->getPortCount();
-	if (nPorts == 0) {
-		if (isInput)
-			std::cout << "No input ports available!" << std::endl;
-		else
-			std::cout << "No output ports available!" << std::endl;
-		return false;
-	}
+	RGBtoHSV(r_float, g_float, b_float, h_float, s_float, v_float);
+	
+	hue = h_float;
+	sat = s_float * 255;
+	val = v_float * 255;
 
-	if (nPorts == 1) {
-		std::cout << "\nOpening " << rtmidi->getPortName(0) << std::endl;
-	}
-	else {
-		for (i = 0; i<nPorts; i++) {
-			portName = rtmidi->getPortName(i);
-			if (isInput)
-				std::cout << "  Input port #" << i << ": " << portName << '\n';
-			else
-				std::cout << "  Output port #" << i << ": " << portName << '\n';
-		}
+ 	char *hsv = new char[4];
+	char mode = 1; // static
+	char enabled = 1;
+	*((uint32_t *) hsv) = (uint32_t)(val << 24) | (uint32_t)(sat << 16) | (uint32_t)(hue << 7) | (uint32_t)(mode << 1) | (enabled);
 
-		do {
-			std::cout << "\nChoose a port number: ";
-			std::cin >> i;
-		} while (i >= nPorts);
-	}
+	Sysex::MT_SET_DATA(Sysex::DT::RGBLIGHT, hsv, 4, this->midiout);
+}
 
-	std::cout << std::endl;
-	rtmidi->openPort(i, "RTMidi");
+void QMK::staticColour(uint8_t red, uint8_t green, uint8_t blue)
+{
+	
 
-	return true;
 }

@@ -5,13 +5,13 @@ Config::Config()
 	// load configuration from text here i guess
 	debug = true;
 
-	ledStrings = true;
+	ledStrings = false;
 	razer = false;
 	asus = false;
 	qmk = true;
 
-	manualControl = false;
-	tempControl = true; 
+	manualControl = true;
+	tempControl = false; 
 
 	tempControlSources = gcnew array<System::String^>(3);
 	tempControlSources[0] = L"CPU";
@@ -26,6 +26,9 @@ Config::Config()
 
 	minColour = Colour::FromInt(LIME);
 	maxColour = Colour::FromInt(RED);
+
+	// QMK variables
+	selectedQMK = 1;
 }
 
 Config::~Config()

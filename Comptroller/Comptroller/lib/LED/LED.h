@@ -24,5 +24,7 @@ public:
 	static Colour ^FromInt(int colourCode);
 	static Colour ^Interpolate(Colour ^colour1, Colour ^colour2, float balance);
 
+
+
 	System::String ^toString();
 };
