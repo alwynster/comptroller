@@ -92,7 +92,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies />
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;winmm.lib;</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>Main</EntryPointSymbol>
     </Link>
@@ -135,12 +135,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CustomKeyboard.cpp" />
     <ClCompile Include="lib\Asus\Asus.cpp" />
     <ClCompile Include="lib\Configuration\Configuration.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
     <ClCompile Include="lib\LED\LEDController.cpp" />
     <ClCompile Include="lib\Measurements\Measurements.cpp" />
     <ClCompile Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.cpp" />
+    <ClCompile Include="lib\QMK\QMK.cpp" />
+    <ClCompile Include="lib\QMK\RtMidi.cpp" />
     <ClCompile Include="lib\Razer\ChromaSDK\ChromaSDKImpl.cpp" />
     <ClCompile Include="lib\Razer\ChromaSDK\FrameController.cpp" />
     <ClCompile Include="lib\Razer\Razer.cpp" />
@@ -157,6 +160,8 @@
     <ClInclude Include="lib\Measurements\Measurements.h" />
     <ClInclude Include="lib\MSI Afterburner\MAHMSharedMemory.h" />
     <ClInclude Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.h" />
+    <ClInclude Include="lib\QMK\QMK.h" />
+    <ClInclude Include="lib\QMK\RtMidi.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\ChromaSDKImpl.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\FrameController.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\RzChromaSDKDefines.h" />

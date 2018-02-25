@@ -160,6 +160,9 @@ void Comptroller::MyForm::updateComponents()
 	if (this->config->asus)
 		if (asus == nullptr)
 			asus = gcnew Asus();
+	if (this->config->qmk)
+		if (qmk == nullptr)
+			qmk = gcnew QMK();
 }
 
 System::Void Comptroller::MyForm::tempControlUpdate(System::Object^  sender, System::EventArgs^  e)

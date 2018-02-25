@@ -8,7 +8,7 @@ public ref class Config
 {
 public:
 	bool debug;
-	bool ledStrings, razer, asus;
+	bool ledStrings, razer, asus, qmk;
 	bool manualControl, tempControl;
 	array<System::String ^> ^tempControlSources;
 	int selectedTempControlSource;

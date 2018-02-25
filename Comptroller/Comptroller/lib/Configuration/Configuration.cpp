@@ -8,6 +8,7 @@ Config::Config()
 	ledStrings = true;
 	razer = false;
 	asus = false;
+	qmk = true;
 
 	manualControl = false;
 	tempControl = true; 

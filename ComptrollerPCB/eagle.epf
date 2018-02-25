@@ -1,5 +1,5 @@
 [Eagle]
-Version="08 05 00"
+Version="08 05 01"
 Platform="Mac OS X"
 Globals="Globals"
 Desktop="Desktop"
@@ -16,5 +16,10 @@ UsedLibrary="/Users/alwynster/git/eaglelibraries/power.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/sensors.lbr"
 UsedLibrary="/Users/alwynster/git/eaglelibraries/wireless.lbr"
 
+[Win_1]
+Type="Control Panel"
+Number=0
+
 [Desktop]
-Screen="640 480"
+Screen="3600 1080"
+Window="Win_1"
