@@ -124,16 +124,19 @@ void QMK::staticColour(Colour ^colour)
 
 	RGBtoHSV(r_float, g_float, b_float, h_float, s_float, v_float);
 	
-	hue = h_float;
+	hue = (uint16_t) h_float;
 	sat = s_float * 255;
 	val = v_float * 255;
 
  	char *hsv = new char[4];
 	char mode = 1; // static
 	char enabled = 1;
-	*((uint32_t *) hsv) = (uint32_t)(val << 24) | (uint32_t)(sat << 16) | (uint32_t)(hue << 7) | (uint32_t)(mode << 1) | (enabled);
+	uint32_t dword = (uint32_t)(val << 24) | (uint32_t)(sat << 16) | (uint32_t)(hue << 7) | (uint32_t)(mode << 1) | (enabled);
 
-	Sysex::MT_SET_DATA(Sysex::DT::RGBLIGHT, hsv, 4, this->midiout);
+	char *bytes = new char[4]{ (char)((dword >> 24) & 0xFF), (char)((dword >> 16) & 0xFF), (char)((dword >> 8) & 0xFF), (char)((dword) & 0xFF) };
+
+
+	Sysex::MT_SET_DATA(Sysex::DT::RGBLIGHT, bytes, 4, this->midiout);
 }
 
 void QMK::staticColour(uint8_t red, uint8_t green, uint8_t blue)
