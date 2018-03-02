@@ -93,12 +93,14 @@ void Sysex::sendBytes(MT message_type, DT data_type, char *bytes, unsigned char 
 	char *precoded = new char[length + 2];
 	precoded[0] = (char)message_type;
 	precoded[1] = (char)data_type;
-	std::copy(bytes, bytes+length, precoded + 2);
+	//std::copy(bytes, bytes+length - 1, precoded + 2);
+	memcpy(precoded + 2, bytes, length);
 	char *encoded = new char[sysex_encoded_length(precodedLength)];
 	unsigned char encoded_length = sysex_encode(encoded, precoded, precodedLength);
 	unsigned char messageLength = encoded_length + 5;
 	unsigned char *message = new unsigned char[messageLength];
-	std::copy(encoded, encoded + encoded_length, message + 4);
+	//std::copy(encoded, encoded + encoded_length - 1, message + 4);
+	memcpy(message + 4, encoded, encoded_length);
 	message[0] = 0xF0;              // 01: F0 - specifies SysEx 
 	message[1] = 0x7E;              // 02: 7E - manufacturer ID
 	message[2] = 0x00;              // 03: 00 - device ID (not readable?)
