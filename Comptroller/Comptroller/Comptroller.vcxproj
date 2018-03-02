@@ -135,7 +135,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CustomKeyboard.cpp" />
     <ClCompile Include="lib\Asus\Asus.cpp" />
     <ClCompile Include="lib\Configuration\Configuration.cpp" />
     <ClCompile Include="lib\LED\hsvrgb-cpp.cpp" />
