@@ -6,6 +6,7 @@
 #include "lib\LED\LED.h"
 #include "lib\Razer\Razer.h"
 #include "lib\Asus\Asus.h"
+#include "lib\Logitech\Logitech.h"
 //
 //#include "lib\Measurements\Measurements.h"
 //#include "lib\LED\LED.h"
@@ -102,8 +103,10 @@ namespace Comptroller {
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::ComboBox^  tempControlList;
 	private: System::Windows::Forms::Timer^  updateTimer;
-	private: System::Windows::Forms::CheckBox^  manualControlBox;
+
 	private: System::Windows::Forms::CheckBox^  debugCheckBox;
+	private: System::Windows::Forms::CheckBox^  logitechCheckBox;
+	private: System::Windows::Forms::CheckBox^  manualControlBox;
 
 	private: System::ComponentModel::IContainer^  components;
 
@@ -150,11 +153,12 @@ namespace Comptroller {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->panel6 = (gcnew System::Windows::Forms::Panel());
 			this->tempControlList = (gcnew System::Windows::Forms::ComboBox());
-			this->manualControlBox = (gcnew System::Windows::Forms::CheckBox());
 			this->tempControlCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->updateTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->debugCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->manualControlBox = (gcnew System::Windows::Forms::CheckBox());
+			this->logitechCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->greenBar))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel4->SuspendLayout();
@@ -343,12 +347,13 @@ namespace Comptroller {
 			// panel5
 			// 
 			this->panel5->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->panel5->Controls->Add(this->logitechCheckBox);
 			this->panel5->Controls->Add(this->asusCheckBox);
 			this->panel5->Controls->Add(this->razerCheckBox);
 			this->panel5->Controls->Add(this->ledStringsCheckBox);
 			this->panel5->Location = System::Drawing::Point(625, 257);
 			this->panel5->Name = L"panel5";
-			this->panel5->Size = System::Drawing::Size(113, 74);
+			this->panel5->Size = System::Drawing::Size(113, 103);
 			this->panel5->TabIndex = 7;
 			// 
 			// asusCheckBox
@@ -403,7 +408,7 @@ namespace Comptroller {
 			this->panel6->Controls->Add(this->tempControlList);
 			this->panel6->Controls->Add(this->manualControlBox);
 			this->panel6->Controls->Add(this->tempControlCheckBox);
-			this->panel6->Location = System::Drawing::Point(625, 353);
+			this->panel6->Location = System::Drawing::Point(625, 382);
 			this->panel6->Name = L"panel6";
 			this->panel6->Size = System::Drawing::Size(113, 92);
 			this->panel6->TabIndex = 7;
@@ -419,17 +424,6 @@ namespace Comptroller {
 			this->tempControlList->TabIndex = 1;
 			this->tempControlList->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::tempControlList_SelectedIndexChanged);
 			// 
-			// manualControlBox
-			// 
-			this->manualControlBox->AutoSize = true;
-			this->manualControlBox->Location = System::Drawing::Point(4, 3);
-			this->manualControlBox->Name = L"manualControlBox";
-			this->manualControlBox->Size = System::Drawing::Size(97, 17);
-			this->manualControlBox->TabIndex = 0;
-			this->manualControlBox->Text = L"Manual Control";
-			this->manualControlBox->UseVisualStyleBackColor = true;
-			this->manualControlBox->CheckedChanged += gcnew System::EventHandler(this, &MyForm::tempControlUpdate);
-			// 
 			// tempControlCheckBox
 			// 
 			this->tempControlCheckBox->AutoSize = true;
@@ -443,7 +437,7 @@ namespace Comptroller {
 			// 
 			// label5
 			// 
-			this->label5->Location = System::Drawing::Point(626, 334);
+			this->label5->Location = System::Drawing::Point(626, 363);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(112, 16);
 			this->label5->TabIndex = 8;
@@ -464,6 +458,28 @@ namespace Comptroller {
 			this->debugCheckBox->Text = L"Debug";
 			this->debugCheckBox->UseVisualStyleBackColor = true;
 			this->debugCheckBox->CheckedChanged += gcnew System::EventHandler(this, &MyForm::debugCheckBox_CheckedChanged);
+			// 
+			// manualControlBox
+			// 
+			this->manualControlBox->AutoSize = true;
+			this->manualControlBox->Location = System::Drawing::Point(4, 3);
+			this->manualControlBox->Name = L"manualControlBox";
+			this->manualControlBox->Size = System::Drawing::Size(97, 17);
+			this->manualControlBox->TabIndex = 0;
+			this->manualControlBox->Text = L"Manual Control";
+			this->manualControlBox->UseVisualStyleBackColor = true;
+			this->manualControlBox->CheckedChanged += gcnew System::EventHandler(this, &MyForm::tempControlUpdate);
+			// 
+			// logitechCheckBox
+			// 
+			this->logitechCheckBox->AutoSize = true;
+			this->logitechCheckBox->Location = System::Drawing::Point(4, 73);
+			this->logitechCheckBox->Name = L"logitechCheckBox";
+			this->logitechCheckBox->Size = System::Drawing::Size(67, 17);
+			this->logitechCheckBox->TabIndex = 1;
+			this->logitechCheckBox->Text = L"Logitech";
+			this->logitechCheckBox->UseVisualStyleBackColor = true;
+			this->logitechCheckBox->CheckedChanged += gcnew System::EventHandler(this, &MyForm::componentCheckBox_CheckedChanged);
 			// 
 			// MyForm
 			// 
@@ -512,6 +528,7 @@ namespace Comptroller {
 	public: LEDController ^ledString3, ^ledString1;
 	public: Razer ^ razer;
 	public: Asus ^ asus;
+	public: Logitech ^ logitech;
 
 	private: System::Void measureButton_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void MyForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {

@@ -114,6 +114,10 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 		asus->StaticColour(colour);
 
 	}
+	if (config->logitech)
+	{
+		logitech->StaticColour(colour);
+	}
 
 	updateTimer->Enabled = 1;
 }
@@ -146,12 +150,13 @@ void Comptroller::MyForm::initComponents()
 	this->ledStringsCheckBox->Checked = config->ledStrings;
 	this->asusCheckBox->Checked = config->asus;
 	this->razerCheckBox->Checked = config->razer;
+	this->logitechCheckBox->Checked = config->logitech;
 }
 
 // gui to active
 void Comptroller::MyForm::updateComponents()
 {
-	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked);
+	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked, this->logitechCheckBox->Checked);
 
 	if (this->config->ledStrings)
 		if (ledString3 == nullptr)
@@ -162,7 +167,10 @@ void Comptroller::MyForm::updateComponents()
 	if (this->config->asus)
 		if (asus == nullptr)
 			asus = gcnew Asus();
-}
+	if (this->config->logitech)
+		if (logitech == nullptr)
+			logitech = gcnew Logitech();
+};
 
 System::Void Comptroller::MyForm::tempControlUpdate(System::Object^  sender, System::EventArgs^  e)
 {
