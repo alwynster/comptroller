@@ -190,11 +190,17 @@ void Comptroller::MyForm::initQMK()
 	this->qmkList->Items->Clear();
 	for (int i = 0; i < this->qmk->midiports->Length; i++)
 	{
-		this->qmkList->Items->Add(this->qmk->midiports[i]);
+		if (this->qmk->midiports[i] != nullptr)
+		{
+			this->qmkList->Items->Add(this->qmk->midiports[i]);
+		}
 	}
-	this->qmkList->SelectedIndex = this->config->selectedQMK;
+	if (this->qmkList->Items->Count > 0)
+	{
+		this->qmkList->SelectedIndex = this->config->selectedQMK;
 
-	this->qmk->Connect(this->qmkList->SelectedIndex);
+		this->qmk->Connect(this->qmkList->SelectedIndex);
+	}
 	//this->tempControlInitialised = true;
 }
 
