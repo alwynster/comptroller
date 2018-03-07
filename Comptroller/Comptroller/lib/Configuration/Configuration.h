@@ -8,12 +8,13 @@ public ref class Config
 {
 public:
 	bool debug;
-	bool ledStrings, razer, asus, qmk;
+	bool ledStrings, razer, asus, qmk, logitech;
 	bool manualControl, tempControl;
 	array<System::String ^> ^tempControlSources;
 	int selectedTempControlSource;
 	float minTemp, maxTemp;
 	Colour ^minColour, ^maxColour;
+	int ledCount;
 
 	int selectedQMK;
 
@@ -21,5 +22,5 @@ public:
 	Config();
 	~Config();
 
-	void setComponents(bool ledStrings, bool asus, bool razer);
+	void setComponents(bool ledStrings, bool asus, bool razer, bool logitech);
 };

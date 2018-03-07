@@ -140,6 +140,7 @@
     <ClCompile Include="lib\LED\hsvrgb-cpp.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
     <ClCompile Include="lib\LED\LEDController.cpp" />
+    <ClCompile Include="lib\Logitech\Logitech.cpp" />
     <ClCompile Include="lib\Measurements\Measurements.cpp" />
     <ClCompile Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.cpp" />
     <ClCompile Include="lib\QMK\QMK.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="lib\LED\hsvrgb-cpp.h" />
     <ClInclude Include="lib\LED\LED.h" />
     <ClInclude Include="lib\LED\LEDController.h" />
+    <ClInclude Include="lib\Logitech\Logitech.h" />
     <ClInclude Include="lib\LED\WS2812_Definitions.h" />
     <ClInclude Include="lib\Measurements\Measurements.h" />
     <ClInclude Include="lib\MSI Afterburner\MAHMSharedMemory.h" />
@@ -184,6 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\hsvrgb-cpp\hsvrgb-cpp" />
+  </ItemGroup>
+  <ItemGroup>
+  <Library Include="lib\Logitech\LogitechLEDLib.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

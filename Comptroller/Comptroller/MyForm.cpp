@@ -32,7 +32,7 @@ void Main(array<String^>^ args) {
 	Comptroller::MyForm form;
 
 	SetupUart();
-	form.ledString1 = gcnew LEDController(0, 6);
+	form.ledString1 = gcnew LEDController(0, 60);
 	form.ledString3 = gcnew LEDController(2, 2);
 
 
@@ -118,6 +118,12 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 	{
 		qmk->staticColour(colour);
 	}
+	if (config->logitech)
+	{
+		logitech->StaticColour(colour);
+	}
+
+	updateTimer->Enabled = 1;
 }
 
 void Comptroller::MyForm::updateColourBars(Colour ^ colour)
@@ -150,6 +156,7 @@ void Comptroller::MyForm::initComponents()
 	this->razerCheckBox->Checked = config->razer;
 
 	this->guiInitialised = true;
+	this->logitechCheckBox->Checked = config->logitech;
 }
 
 // gui to active
@@ -157,7 +164,8 @@ void Comptroller::MyForm::updateComponents()
 {
 	if (!guiInitialised) return;
 
-	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked);
+	//this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked);
+	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked, this->logitechCheckBox->Checked);
 
 	if (this->config->ledStrings)
 		if (ledString3 == nullptr)
@@ -171,7 +179,11 @@ void Comptroller::MyForm::updateComponents()
 	if (this->config->qmk)
 		if (qmk == nullptr)
 			qmk = gcnew QMK();
-}
+
+	if (this->config->logitech)
+		if (logitech == nullptr)
+			logitech = gcnew Logitech();
+};
 
 System::Void Comptroller::MyForm::tempControlUpdate(System::Object^  sender, System::EventArgs^  e)
 {
@@ -252,47 +264,62 @@ System::Void Comptroller::MyForm::updateTimer_Tick(System::Object^  sender, Syst
 	// update measurements
 	this->msi->FetchReadings();
 	this->debug();
-	
+
 	float currentTemp = -1;
-	switch (this->config->selectedTempControlSource)
-	{
-	//cpu
-	case 0:
-		currentTemp = this->msi->measurements->cpuTemp;
-		break;
-	// gpu
-	case 1:
-		currentTemp = this->msi->measurements->gpuTemp;
-		break;
-	// mobo
-	case 2:
-		currentTemp = this->msi->measurements->motherboardTemperature;
-		break;
-	default:
-		currentTemp = -1;
-		break;
+	if (this->config->tempControl) {
+		switch (this->config->selectedTempControlSource)
+		{
+			//cpu
+		case 0:
+			currentTemp = this->msi->measurements->cpuTemp;
+			break;
+			// gpu
+		case 1:
+			currentTemp = this->msi->measurements->gpuTemp;
+			break;
+			// mobo
+		case 2:
+			currentTemp = this->msi->measurements->motherboardTemperature;
+			break;
+		default:
+			currentTemp = -1;
+			break;
+		}
+
+
+		// error with reading temp
+		if (currentTemp == -1)
+			return;
+
+		if (config->debug)
+		{
+			this->debugBox->Text += L"Current Temp: ";
+			this->debugBox->Text += (currentTemp);
+		}
+
+
+		float balance;
+		// first catch extremes
+		if (currentTemp < this->config->minTemp)
+			balance = 0;
+		else if (currentTemp > this->config->maxTemp)
+			balance = 1;
+		else
+			balance = (currentTemp - this->config->minTemp) / ((float)this->config->maxTemp - this->config->minTemp);
+
+
+		Colour ^currentColour = Colour::Interpolate(this->config->minColour, this->config->maxColour, balance);
+		this->staticColour(currentColour);
 	}
 
-	// error with reading temp
-	if (currentTemp == -1)
-		return;
+	if (this->config->manualControl) {
 
-	if (config->debug)
-	{
-		this->debugBox->Text += L"Current Temp: ";
-		this->debugBox->Text += (currentTemp);
+		uint8_t r, g, b;
+		r = (uint8_t)this->redBar->Value;
+		g = (uint8_t)this->greenBar->Value;
+		b = (uint8_t)this->blueBar->Value;
+
+		this->staticColour(Colour::FromRGB(r, g, b));
 	}
-
-	float balance;
-	// first catch extremes
-	if (currentTemp < this->config->minTemp)
-		balance = 0;
-	else if (currentTemp > this->config->maxTemp)
-		balance = 1;
-	else
-		balance = (currentTemp - this->config->minTemp) / ((float)this->config->maxTemp - this->config->minTemp);
-
-	Colour ^currentColour = Colour::Interpolate(this->config->minColour, this->config->maxColour, balance);
-	this->staticColour(currentColour);
 
 }

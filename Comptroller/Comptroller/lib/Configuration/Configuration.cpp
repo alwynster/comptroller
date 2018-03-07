@@ -9,6 +9,7 @@ Config::Config()
 	razer = false;
 	asus = false;
 	qmk = true;
+	logitech = false;
 
 	manualControl = true;
 	tempControl = false; 
@@ -36,9 +37,10 @@ Config::~Config()
 
 }
 
-void Config::setComponents(bool ledStrings, bool asus, bool razer)
+void Config::setComponents(bool ledStrings, bool asus, bool razer, bool logitech)
 {
 	this->ledStrings = ledStrings;
 	this->asus = asus;
 	this->razer = razer;
+	this->logitech = logitech;
 }
