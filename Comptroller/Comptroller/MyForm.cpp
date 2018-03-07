@@ -240,8 +240,10 @@ void Comptroller::MyForm::updateTempControl()
 	if (manual)
 		this->tempControlCheckBox->Checked = false;
 	
-	this->config->tempControl = this->tempControlCheckBox->Checked;
+	bool temp = this->tempControlCheckBox->Checked;
+	this->config->tempControl = temp;
 	this->config->selectedTempControlSource = this->tempControlList->SelectedIndex;
+	this->tempControlList->Enabled = temp;
 	updateTimer->Enabled = this->config->tempControl;
 }
 
