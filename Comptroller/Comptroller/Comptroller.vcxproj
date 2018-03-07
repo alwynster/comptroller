@@ -135,15 +135,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CustomKeyboard.cpp" />
     <ClCompile Include="lib\Asus\Asus.cpp" />
     <ClCompile Include="lib\Configuration\Configuration.cpp" />
+    <ClCompile Include="lib\LED\hsvrgb-cpp.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
     <ClCompile Include="lib\LED\LEDController.cpp" />
     <ClCompile Include="lib\Measurements\Measurements.cpp" />
     <ClCompile Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.cpp" />
     <ClCompile Include="lib\QMK\QMK.cpp" />
     <ClCompile Include="lib\QMK\RtMidi.cpp" />
+    <ClCompile Include="lib\QMK\Sysex.cpp" />
     <ClCompile Include="lib\Razer\ChromaSDK\ChromaSDKImpl.cpp" />
     <ClCompile Include="lib\Razer\ChromaSDK\FrameController.cpp" />
     <ClCompile Include="lib\Razer\Razer.cpp" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="lib\Asus\Asus.h" />
     <ClInclude Include="lib\Configuration\Configuration.h" />
+    <ClInclude Include="lib\LED\hsvrgb-cpp.h" />
     <ClInclude Include="lib\LED\LED.h" />
     <ClInclude Include="lib\LED\LEDController.h" />
     <ClInclude Include="lib\LED\WS2812_Definitions.h" />
@@ -162,6 +164,7 @@
     <ClInclude Include="lib\MSI Afterburner\MSIAfterBurnerPlugin.h" />
     <ClInclude Include="lib\QMK\QMK.h" />
     <ClInclude Include="lib\QMK\RtMidi.h" />
+    <ClInclude Include="lib\QMK\Sysex.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\ChromaSDKImpl.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\FrameController.h" />
     <ClInclude Include="lib\Razer\ChromaSDK\RzChromaSDKDefines.h" />
@@ -178,6 +181,9 @@
     <EmbeddedResource Include="MyForm.resx">
       <DependentUpon>MyForm.h</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\hsvrgb-cpp\hsvrgb-cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,3 +1,6 @@
 [submodule "ComptrollerConsole/ComptrollerConsole/lib/tinyxml2"]
 	path = Comptroller/Comptroller/lib/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "Comptroller/Comptroller/lib/4935ae72bcbcc1ba5c72"]
+	path = Comptroller/Comptroller/lib/hsvrgb-cpp
+	url = https://gist.github.com/4935ae72bcbcc1ba5c72.git
