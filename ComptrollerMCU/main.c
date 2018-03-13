@@ -23,18 +23,18 @@ int main(void)
 	initLedString(&leds2, &DDRB, &PORTB, 3);
 	initLedString(&leds3, &DDRD, &PORTD, 2);
 
-	updateNumLeds(&leds1, 2);
+	updateNumLeds(&leds1, 120);
 	updateNumLeds(&leds2, 2);
 	updateNumLeds(&leds3, 2);
 
-	// ledStatic(&leds1, 0, 0, 255);
-	// ledStatic(&leds2, 0, 255, 0);
-	// ledStatic(&leds3, 255, 0, 0);
+	ledStatic(&leds1, 50, 50, 50);
+	ledStatic(&leds2, 0, 255, 0);
+	ledStatic(&leds3, 50, 50, 50);
 
-	leds3.animationLength = 2;
-	leds3.animationSteps = 1000;
-	updateNumLeds(&leds3, 2);
-	ledWave(&leds3, 100, 0, 1, 1, 0, 100);
+	// leds3.animationLength = 2;
+	// leds3.animationSteps = 1000;
+	// updateNumLeds(&leds3, 2);
+	// ledWave(&leds3, 100, 0, 1, 1, 0, 100);
 
 // void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 

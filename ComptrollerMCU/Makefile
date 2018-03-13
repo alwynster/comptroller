@@ -185,7 +185,7 @@ flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
 flash_109: flash
 
 flash_arduino: PROGRAMMER_TYPE = arduino
-flash_arduino: PROGRAMMER_ARGS = -P COM3
+# flash_arduino: PROGRAMMER_ARGS = $(PROGRAMMER_ARGS)
 flash_arduino: $(TARGET).hex
 	echo $(SOURCES)
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) -V $(PROGRAMMER_ARGS) -U flash:w:$<

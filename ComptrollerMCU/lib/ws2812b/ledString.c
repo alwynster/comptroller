@@ -41,8 +41,8 @@ void updateNumLeds(ledString *string, uint16_t numberLeds)
   if(string->animationDirections)
     free(string->animationDirections);
 
-  string->animationIndexes = (uint16_t *) malloc(string->numLeds * sizeof(uint16_t));
-  string->animationDirections = (animationDirection *) malloc(string->numLeds * sizeof(animationDirection));
+  // string->animationIndexes = (uint16_t *) malloc(string->numLeds * sizeof(uint16_t));
+  // string->animationDirections = (animationDirection *) malloc(string->numLeds * sizeof(animationDirection));
   string->buffer = (uint8_t *) malloc(string->numLeds * 3);
   memset(string->buffer, 0, 3 * string->numLeds);
 }
