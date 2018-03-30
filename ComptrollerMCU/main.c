@@ -27,7 +27,7 @@ int main(void)
 	updateNumLeds(&leds2, 2);
 	updateNumLeds(&leds3, 2);
 
-	ledStatic(&leds1, 50, 50, 50);
+	ledStatic(&leds1, 0, 0, 0);
 	ledStatic(&leds2, 0, 255, 0);
 	ledStatic(&leds3, 50, 50, 50);
 

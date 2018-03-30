@@ -32,7 +32,7 @@ void Main(array<String^>^ args) {
 	Comptroller::MyForm form;
 
 	SetupUart();
-	form.ledString1 = gcnew LEDController(0, 60);
+	form.ledString1 = gcnew LEDController(0, 120);
 	form.ledString3 = gcnew LEDController(2, 2);
 
 
@@ -123,7 +123,7 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 		logitech->StaticColour(colour);
 	}
 
-	updateTimer->Enabled = 1;
+	//updateTimer->Enabled = 1;
 }
 
 void Comptroller::MyForm::updateColourBars(Colour ^ colour)
@@ -312,14 +312,14 @@ System::Void Comptroller::MyForm::updateTimer_Tick(System::Object^  sender, Syst
 		this->staticColour(currentColour);
 	}
 
-	if (this->config->manualControl) {
+	//if (this->config->manualControl) {
 
-		uint8_t r, g, b;
-		r = (uint8_t)this->redBar->Value;
-		g = (uint8_t)this->greenBar->Value;
-		b = (uint8_t)this->blueBar->Value;
+	//	uint8_t r, g, b;
+	//	r = (uint8_t)this->redBar->Value;
+	//	g = (uint8_t)this->greenBar->Value;
+	//	b = (uint8_t)this->blueBar->Value;
 
-		this->staticColour(Colour::FromRGB(r, g, b));
-	}
+	//	this->staticColour(Colour::FromRGB(r, g, b));
+	//}
 
 }

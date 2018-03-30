@@ -14,7 +14,7 @@ LEDController::LEDController(uint8_t index, uint16_t numLeds)
 	this->numLeds = numLeds;
 	this->index = index;
 
-	this->setNumLeds();
+	//this->setNumLeds();
 
 	this->leds = gcnew Colour();
 }
