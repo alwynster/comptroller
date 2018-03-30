@@ -4,3 +4,6 @@
 [submodule "Comptroller/Comptroller/lib/4935ae72bcbcc1ba5c72"]
 	path = Comptroller/Comptroller/lib/hsvrgb-cpp
 	url = https://gist.github.com/4935ae72bcbcc1ba5c72.git
+[submodule "serial"]
+	path = serial
+	url = https://github.com/wjwwood/serial.git

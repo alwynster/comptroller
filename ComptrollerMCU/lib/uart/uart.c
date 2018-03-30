@@ -75,7 +75,7 @@ uint8_t uartSending(void)
 
 void uartNewLine(void)
 {
-	uartWriteChar('\r');
+	// uartWriteChar('\r');
 	uartWriteChar('\n');
 }
 

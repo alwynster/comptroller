@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include "lib\MSI Afterburner\MSIAfterBurnerPlugin.h"
-#include "lib\UART\UART.h"
+//#include "lib\UART\UART.h"
 #include "lib\LED\LED.h"
 #include "lib\Razer\Razer.h"
 #include "lib\Asus\Asus.h"
@@ -40,6 +40,7 @@ namespace Comptroller {
 			this->appInitialised = false;
 			this->msi = gcnew MSIAfterBurnerPlugin();
 			this->config = gcnew Config();
+			this->initLedString();
 
 			InitializeComponent();
 
@@ -569,7 +570,7 @@ namespace Comptroller {
 
 	public: void updateColourBars(Colour ^colour);
 
-	public: LEDController ^ ledString3, ^ledString1;
+	public: LEDController ^ ledString; // , ^ledString1;
 	public: Razer ^ razer;
 	public: Asus ^ asus;
 	public: QMK ^ qmk;
@@ -580,7 +581,7 @@ namespace Comptroller {
 
 	private: System::Void measureButton_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void MyForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-		ledString3->staticColour(BLACK);
+		ledString->blackout();
 		//ledString1->staticColour(BLACK);
 	}
 
@@ -588,9 +589,17 @@ namespace Comptroller {
 	private: void initComponents();
 	private: bool guiInitialised;
 	private: bool appInitialised;
+	private: bool ignoreBarChange = false;
 	private: void initQMK();
 	private: void initTempControl();
 	private: void updateTempControl();
+	private: void initLedString(void)
+	{
+		uint8_t const numLedsArray[] = { (uint8_t)120, 0, (uint8_t)2 };
+		std::list<uint16_t> numLeds(numLedsArray, numLedsArray + sizeof(numLedsArray) / sizeof(*numLedsArray));
+
+		this->ledString = gcnew LEDController(numLeds);
+	}
 
 	private: System::Void redButton_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void greenButton_Click(System::Object^  sender, System::EventArgs^  e);

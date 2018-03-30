@@ -7,7 +7,8 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
-#define baud 9600 // 250000
+// #warning BAUD
+#define baud 250000  // 250000
 #define UART_2X 0
 #if UART_2X
 #define my_bdr ((F_CPU / 8 / (baud)) - 1)

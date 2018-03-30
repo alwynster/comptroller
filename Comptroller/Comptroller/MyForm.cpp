@@ -31,10 +31,7 @@ void Main(array<String^>^ args) {
 	Application::SetCompatibleTextRenderingDefault(false);
 	Comptroller::MyForm form;
 
-	//form.setLedStringsConnected( > 0);
-	//form.ledString1 = gcnew LEDController(0, 30);
-	form.ledString3 = gcnew LEDController(2, 2);
-	if (!form.ledString3->uart->isOpen())
+	if (!form.ledString->serial->isOpen())
 		form.config->ledStrings = false;
 	else
 		form.setLedStringsConnected(true);
@@ -109,7 +106,8 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 	if (config->ledStrings)
 	{
 		//ledString1->staticColour(colour);
-		ledString3->staticColour(colour);
+		if (!ledString->staticColour(0, colour))
+			this->setLedStringsConnected(false);
 	}
 	if (config->asus)
 	{
@@ -130,13 +128,21 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 
 void Comptroller::MyForm::updateColourBars(Colour ^ colour)
 {
+	// don't update colour every time the colour bars change
+	this->ignoreBarChange = true;
+
 	this->redBar->Value = colour->r;
 	this->greenBar->Value = colour->g;
 	this->blueBar->Value = colour->b;
+
+	this->ignoreBarChange = false;
 }
 
 System::Void Comptroller::MyForm::colourBar_ValueChanged(System::Object^  sender, System::EventArgs^  e)
 {
+	if (this->ignoreBarChange)
+		return;
+
 	uint8_t r, g, b;
 	r = (uint8_t) this->redBar->Value;
 	g = (uint8_t) this->greenBar->Value;
@@ -175,8 +181,10 @@ void Comptroller::MyForm::updateComponents()
 	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked, this->logitechCheckBox->Checked);
 
 	if (this->config->ledStrings)
-		if (ledString3 == nullptr)
-			ledString3 = gcnew LEDController(2, 2);
+		if (ledString == nullptr)
+		{
+			this->initLedString();
+		}
 	if (this->config->razer)
 		if (razer == nullptr)
 			razer = gcnew Razer();

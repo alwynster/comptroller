@@ -3,7 +3,7 @@
 #include "lib/uart/uart.h"
 #include <avr/io.h>
 #include <util/delay.h>
-
+ 
 void uartReceive(uint8_t data);
 
 int main(void)
@@ -14,9 +14,13 @@ int main(void)
 	DDRD |= _BV(4);
 	PORTD &= ~_BV(4);
 
+	// onboard LED
+	DDRB |= _BV(5);
+	PORTB &= ~_BV(5);
+
 	uartInit(&uartReceive);
-	uartWriteString("Starting...");
-	_delay_ms(500);
+	uartWriteLine("Starting...");
+	// _delay_ms(500);
 
 	ledString leds1, leds2, leds3;
 	initLedString(&leds1, &DDRC, &PORTC, 0);
@@ -29,7 +33,7 @@ int main(void)
 
 	ledStatic(&leds1, 0, 0, 0);
 	ledStatic(&leds2, 0, 255, 0);
-	ledStatic(&leds3, 50, 50, 50);
+	ledStatic(&leds3, 255, 255, 255);
 
 	// leds3.animationLength = 2;
 	// leds3.animationSteps = 1000;
@@ -47,6 +51,9 @@ int main(void)
 
 	while(1)
 	{
+		// waitign for new commands...
+		PORTB |= _BV(5);
+
 		// check if new uart data is available
 		if (uartAvailable())
 		{
@@ -56,6 +63,8 @@ int main(void)
 			// while (uart != 'S')
 			{
 				uart = uartReceiveCharBlocking();
+				PORTB &= ~_BV(5);
+
 				// uartWriteString("receiving...");
 				// _delay_ms(500);
 			}
@@ -86,16 +95,28 @@ int main(void)
 			// receive data
 			switch(uart)
 			{
+
+				case 'H':
+					// handshake
+					uartWriteLine("H");
+					break;
+					
 				case 'I':
 					// init 
 					num_leds = uartReceiveCharBlocking();
 					num_leds |= ((uint16_t) uartReceiveCharBlocking() << 8);
 
-					uartWriteString("setting num leds ");
-					uartWriteDec16(num_leds);
-					uartNewLine();
 
 					updateNumLeds(string, num_leds);
+
+					uartWriteString("setting num leds ");
+					uartWriteDec16(num_leds);
+					uartNewLine();					
+
+					// uartWriteLine("Done");
+
+
+
 					break;
 
 				case 'S':
@@ -106,6 +127,15 @@ int main(void)
 
 
 					ledStatic(string, r, g, b);
+					uartWriteString("Setting string ");
+					uartWriteDec8(index);
+					uartWriteString(" to (");
+					uartWriteDec8(r);
+					uartWriteString(", ");
+					uartWriteDec8(g);
+					uartWriteString(", ");
+					uartWriteDec8(b);
+					uartWriteLine(")");
 
 					break;
 				case 'W':

@@ -1,6 +1,6 @@
 #include "LEDController.h"
 #include "LED.h"
-#include "../UART/UART.h"
+//#include "../UART/UART.h"
 #include "../LED/WS2812_Definitions.h"
 #include <iostream>   
 //#include <stdlib.h>
@@ -9,96 +9,161 @@
 
 void setBufferColour(uint8_t *buffer, uint8_t r, uint8_t g, uint8_t b);
 
-LEDController::LEDController(uint8_t index, uint16_t numLeds)
+LEDController::LEDController(std::list<uint16_t> numLeds)
 {
-	this->uart = gcnew Uart();
+	// do not allow colour update before previous is done
+	this->updating = false;
 
-	if (!this->uart->isOpen())
-		return;
+	this->serial = new serial::Serial("COM3", 250000, serial::Timeout::simpleTimeout(1000));
+	this->serial->flush();
+	Sleep(1000); // takes the bootloader some time to load...
+	std::string readstr = this->serial->readline(200, "\n");
+	//if (readstr.length() > 0)
+	//	MessageBox(NULL, CStringW(readstr.c_str()), L"UART Success", MB_OK);
+
+	if (readstr.length() == 0)
+	{
+		// try handshake to see if mcu already running
+		this->serial->write("H0");
+		readstr = this->readline();
+
+		if (readstr.length() == 0)
+		{
+			this->serial->close();
+			MessageBox(NULL, L"Nothing received at startup", L"UART Fail", MB_OK);
+			return;
+		}
+	}
+	//MessageBox(NULL, CStringW(this->serial->readline().c_str()), L"UART Success", MB_OK);
+
+	//this->uart = gcnew Uart();
+
+	//if (!this->uart->isOpen())
+	//	return;
 
 	//SetupUart();
-	this->numLeds = numLeds;
-	this->index = index;
+	//this->numLeds = numLeds;
+	//this->index = index;
 
-	this->setNumLeds();
+	// set number of all used strings
+	this->numLedStrings = numLeds.size();
+	for (uint8_t i = 0; i < numLeds.size(); i++)
+	{
+		this->setNumLeds(i, numLeds.front());
+		numLeds.pop_front();
+	}
+
+	//Sleep(2000);
 
 	this->leds = gcnew Colour();
 
 	//this->uart->SetupUart();
 }
 
+std::string LEDController::readline(void)
+{
+	std::string str = this->serial->readline(200, "\n");
+	if (str.length() == 0)
+		this->serial->close();
+	return str;
+}
+
 LEDController::~LEDController()
 {
-	staticColour(BLACK);
+	this->blackout();
+}
+
+void LEDController::blackout()
+{
+	for (uint8_t i = 0; i < this->numLedStrings; i++)
+		staticColour(i, BLACK);
 }
 
 
-void LEDController::setNumLeds(void)
+void LEDController::setNumLeds(uint8_t index, uint16_t numLeds)
 {
+	if (!this->serial->isOpen())
+		return;
+
 	uint8_t *buffer = new uint8_t[4];// (unsigned char *)std::malloc(4);
 	*(buffer + 0) = 'I';
-	*(buffer + 1) = this->index;
-	*(buffer + 2) = 0xff & this->numLeds;
-	*(buffer + 3) = 0xff & (this->numLeds >> 8);
+	*(buffer + 1) = index;
+	*(buffer + 2) = 0xff & numLeds;
+	*(buffer + 3) = 0xff & (numLeds >> 8);
 
-	uart->WriteUart(buffer, 4);
-	uint8_t *readbuffer = new uint8_t[100];
-	int readNum = 0; 
+	this->serial->write(buffer, 4);
+	//uart->WriteUart(buffer, 4);
+	//uint8_t *readbuffer = new uint8_t[100];
+	//int readNum = 0; 
+	std::string readStr = "";
 	
-	do
-	{
-		readNum = uart->ReadUart(readbuffer, 100);
 
+	readStr = this->readline();
+	//if (readStr.length() > 0)
+	//	MessageBox(NULL, CStringW(readStr.c_str()), L"UART Success", MB_OK);
+	//else
+	if (readStr.length() == 0)
+		MessageBox(NULL, L"Nothing received", L"UART Fail", MB_OK);
 
-		if (readNum < 0)
-			MessageBox(NULL, L"Error with reading uart...", L"UART Error", MB_OK);
-		else if (readNum > 0)
-			MessageBox(NULL, CStringW(readbuffer), L"UART Success", MB_OK);
-		uart->WriteUart(buffer, 4);
-	}
-	while (readNum == 0);
-
-	printf("Setting string %d to %d LEDs\n", this->index, this->numLeds);
+	//printf("Setting string %d to %d LEDs\n", this->index, this->numLeds);
 
 	delete[] buffer;
-	delete[] readbuffer;
+	//delete[] readbuffer;
 }
 
 
-void LEDController::staticColour(Colour ^colour)
+bool LEDController::staticColour(uint8_t index, Colour ^colour)
 {
-	this->staticColour(colour->r, colour->g, colour->b);
+	return this->staticColour(index, colour->r, colour->g, colour->b);
 }
 
-void LEDController::staticColour(uint32_t colour)
+bool LEDController::staticColour(uint8_t index, uint32_t colour)
 {
-	this->staticColour((colour >> 0) & 0xff, (colour >> 8) & 0xff, (colour >> 16) & 0xff);
+	return this->staticColour(index, (colour >> 0) & 0xff, (colour >> 8) & 0xff, (colour >> 16) & 0xff);
 }
 
-void LEDController::staticColour(uint8_t red, uint8_t green, uint8_t blue)
+bool LEDController::staticColour(uint8_t index, uint8_t red, uint8_t green, uint8_t blue)
 {
+	if (!this->serial->isOpen() || this->updating)
+		return false;
+
+	this->updating = true;
+
 	uint8_t header = 2;
 	uint16_t size = header + 3;
 	uint8_t *buffer = new uint8_t[size];
 	*(buffer + 0) = 'S';
 	*(buffer + 1) = index;
 
-	printf("Setting all LEDs (%d) on %d to (%d, %d, %d)\n", this->numLeds, this->index, red, green, blue);
+	//printf("Setting all LEDs (%d) on %d to (%d, %d, %d)\n", this->numLeds, this->index, red, green, blue);
 	unsigned char *ptr = buffer + header;
 
 	setBufferColour(ptr, red, green, blue);
 
-	uart->WriteUart(buffer, size);
+	this->serial->write(buffer, size);
+	std::string readStr = "";
+
+	readStr = this->readline();
+	if (readStr.length() == 0)
+		//MessageBox(NULL, CStringW(readStr.c_str()), L"UART Success", MB_OK);
+	//else
+		MessageBox(NULL, L"Nothing received", L"UART Fail", MB_OK);
+
+	//uart->WriteUart(buffer, size);
 	
 	delete[] buffer;
+
+	this->updating = false;
+
+	return true;
 }
 
-void LEDController::waveColour(uint16_t steps, uint8_t length, uint32_t colour1, uint32_t colour2)
+bool LEDController::waveColour(uint8_t index, uint16_t steps, uint8_t length, uint32_t colour1, uint32_t colour2)
 {
-	this->waveColour(steps, length, (colour1 >> 16) & 0xff, (colour1 >> 8) & 0xff, colour1 & 0xff, (colour2 >> 16) & 0xff, (colour2 >> 8) & 0xff, colour2 & 0xff);
+	return this->waveColour(index, steps, length, (colour1 >> 16) & 0xff, (colour1 >> 8) & 0xff, colour1 & 0xff, (colour2 >> 16) & 0xff, (colour2 >> 8) & 0xff, colour2 & 0xff);
 }
 
-void LEDController::waveColour(uint16_t steps, uint8_t length, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
+bool LEDController::waveColour(uint8_t index, uint16_t steps, uint8_t length, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 {
 	uint8_t header = 3;
 	uint16_t size = header + 2 * 3 + 2;
@@ -109,7 +174,7 @@ void LEDController::waveColour(uint16_t steps, uint8_t length, uint8_t red1, uin
 	*(buffer + 2) = length;
 
 
-	printf("Setting all LEDs on %d to wave (%d, %d, %d)\n", this->index, red1, green1, blue1);
+	printf("Setting all LEDs on %d to wave (%d, %d, %d)\n", index, red1, green1, blue1);
 	uint8_t *ptr = buffer + header;
 
 	setBufferColour(ptr, red1, green1, blue1);
@@ -121,9 +186,11 @@ void LEDController::waveColour(uint16_t steps, uint8_t length, uint8_t red1, uin
 	*ptr++ = steps & 0xff;
 	*ptr++ = (steps >> 8) & 0xff;
 
-	uart->WriteUart(buffer, size);
+	this->serial->write(buffer, size);
+	//uart->WriteUart(buffer, size);
 
 	delete[] buffer;
+	return true;
 }
 
 void setBufferColour(uint8_t * buffer, uint8_t r, uint8_t g, uint8_t b)
@@ -133,12 +200,12 @@ void setBufferColour(uint8_t * buffer, uint8_t r, uint8_t g, uint8_t b)
 	*(buffer + 2) = b;
 }
 
-void LEDController::breathingColour(uint16_t steps, uint32_t colour1, uint32_t colour2)
+bool LEDController::breathingColour(uint8_t index, uint16_t steps, uint32_t colour1, uint32_t colour2)
 {
-	this->breathingColour(steps, (colour1 >> 16) & 0xff, (colour1 >> 8) & 0xff, colour1 & 0xff, (colour2 >> 16) & 0xff, (colour2 >> 8) & 0xff, colour2 & 0xff);
+	return this->breathingColour(index, steps, (colour1 >> 16) & 0xff, (colour1 >> 8) & 0xff, colour1 & 0xff, (colour2 >> 16) & 0xff, (colour2 >> 8) & 0xff, colour2 & 0xff);
 }
 
-void LEDController::breathingColour(uint16_t steps, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
+bool LEDController::breathingColour(uint8_t index, uint16_t steps, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 {
 	uint8_t header = 2;
 	uint16_t size = header + 2 * 3 + 2;
@@ -146,7 +213,7 @@ void LEDController::breathingColour(uint16_t steps, uint8_t red1, uint8_t green1
 	*(buffer + 0) = 'B';
 	*(buffer + 1) = index;
 	
-	printf("Setting all LEDs on %d to breathe (%d, %d, %d)\n", this->index, red1, green1, blue1);
+	printf("Setting all LEDs on %d to breathe (%d, %d, %d)\n", index, red1, green1, blue1);
 	unsigned char *ptr = buffer + header;
 
 	setBufferColour(ptr, red1, green1, blue1);
@@ -156,7 +223,10 @@ void LEDController::breathingColour(uint16_t steps, uint8_t red1, uint8_t green1
 	*ptr++ = steps & 0xff;
 	*ptr++ = (steps >> 8) & 0xff;
 
-	uart->WriteUart(buffer, size);
+	this->serial->write(buffer, size);
+
+	//uart->WriteUart(buffer, size);
 	
 	delete[] buffer;
+	return true;
 }

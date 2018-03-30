@@ -90,6 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\alwynster\git\comptroller\serial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;winmm.lib;</AdditionalDependencies>
@@ -150,7 +151,6 @@
     <ClCompile Include="lib\Razer\ChromaSDK\FrameController.cpp" />
     <ClCompile Include="lib\Razer\Razer.cpp" />
     <ClCompile Include="lib\tinyxml2\tinyxml2.cpp" />
-    <ClCompile Include="lib\UART\UART.cpp" />
     <ClCompile Include="MyForm.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +174,6 @@
     <ClInclude Include="lib\Razer\ChromaSDK\RzErrors.h" />
     <ClInclude Include="lib\Razer\Razer.h" />
     <ClInclude Include="lib\tinyxml2\tinyxml2.h" />
-    <ClInclude Include="lib\UART\UART.h" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -188,7 +187,12 @@
     <None Include="lib\hsvrgb-cpp\hsvrgb-cpp" />
   </ItemGroup>
   <ItemGroup>
-  <Library Include="lib\Logitech\LogitechLEDLib.lib" />
+    <Library Include="lib\Logitech\LogitechLEDLib.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\serial\visual_studio\serial\serial.vcxproj">
+      <Project>{a8517fb2-c74e-43bd-b3c6-b05d3fc11ecd}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

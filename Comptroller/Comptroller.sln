@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Comptroller", "Comptroller\Comptroller.vcxproj", "{7F0701B4-76E3-4576-8547-A7E313DE8928}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serial", "..\serial\visual_studio\serial\serial.vcxproj", "{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{7F0701B4-76E3-4576-8547-A7E313DE8928}.Release|x64.Build.0 = Release|x64
 		{7F0701B4-76E3-4576-8547-A7E313DE8928}.Release|x86.ActiveCfg = Release|Win32
 		{7F0701B4-76E3-4576-8547-A7E313DE8928}.Release|x86.Build.0 = Release|Win32
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Debug|x64.ActiveCfg = Debug|x64
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Debug|x64.Build.0 = Debug|x64
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Debug|x86.ActiveCfg = Debug|Win32
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Debug|x86.Build.0 = Debug|Win32
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Release|x64.ActiveCfg = Release|x64
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Release|x64.Build.0 = Release|x64
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Release|x86.ActiveCfg = Release|Win32
+		{A8517FB2-C74E-43BD-B3C6-B05D3FC11ECD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
