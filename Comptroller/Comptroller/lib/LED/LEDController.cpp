@@ -5,18 +5,26 @@
 #include <iostream>   
 //#include <stdlib.h>
 #include <cstdlib>
+#include <atlstr.h>
 
 void setBufferColour(uint8_t *buffer, uint8_t r, uint8_t g, uint8_t b);
 
 LEDController::LEDController(uint8_t index, uint16_t numLeds)
 {
+	this->uart = gcnew Uart();
+
+	if (!this->uart->isOpen())
+		return;
+
 	//SetupUart();
 	this->numLeds = numLeds;
 	this->index = index;
 
-	//this->setNumLeds();
+	this->setNumLeds();
 
 	this->leds = gcnew Colour();
+
+	//this->uart->SetupUart();
 }
 
 LEDController::~LEDController()
@@ -33,11 +41,27 @@ void LEDController::setNumLeds(void)
 	*(buffer + 2) = 0xff & this->numLeds;
 	*(buffer + 3) = 0xff & (this->numLeds >> 8);
 
-	WriteUart(buffer, 4);
+	uart->WriteUart(buffer, 4);
+	uint8_t *readbuffer = new uint8_t[100];
+	int readNum = 0; 
+	
+	do
+	{
+		readNum = uart->ReadUart(readbuffer, 100);
+
+
+		if (readNum < 0)
+			MessageBox(NULL, L"Error with reading uart...", L"UART Error", MB_OK);
+		else if (readNum > 0)
+			MessageBox(NULL, CStringW(readbuffer), L"UART Success", MB_OK);
+		uart->WriteUart(buffer, 4);
+	}
+	while (readNum == 0);
 
 	printf("Setting string %d to %d LEDs\n", this->index, this->numLeds);
 
 	delete[] buffer;
+	delete[] readbuffer;
 }
 
 
@@ -64,7 +88,7 @@ void LEDController::staticColour(uint8_t red, uint8_t green, uint8_t blue)
 
 	setBufferColour(ptr, red, green, blue);
 
-	WriteUart(buffer, size);
+	uart->WriteUart(buffer, size);
 	
 	delete[] buffer;
 }
@@ -97,7 +121,7 @@ void LEDController::waveColour(uint16_t steps, uint8_t length, uint8_t red1, uin
 	*ptr++ = steps & 0xff;
 	*ptr++ = (steps >> 8) & 0xff;
 
-	WriteUart(buffer, size);
+	uart->WriteUart(buffer, size);
 
 	delete[] buffer;
 }
@@ -132,7 +156,7 @@ void LEDController::breathingColour(uint16_t steps, uint8_t red1, uint8_t green1
 	*ptr++ = steps & 0xff;
 	*ptr++ = (steps >> 8) & 0xff;
 
-	WriteUart(buffer, size);
+	uart->WriteUart(buffer, size);
 	
 	delete[] buffer;
 }

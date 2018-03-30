@@ -1,19 +1,35 @@
 #include "UART.h"
 #include <stdio.h>
+#include <stdint.h>
+#include <sstream>
+#include <atlstr.h>
 
-int configure();
-int configuretimeout();
-
-DCB            PortDCB;
-HANDLE         hPort;
-COMMTIMEOUTS   CommTimeouts;
+//int configure();
 char           lastError[1024], buf1[100], buf2[100];
 
-int SetupUart() //  char *Port = "COM1", int baud = 9600, int Bitsize = 8, int StopBits = 1, int Parity = NOPARITY);
+
+bool Uart::isOpen(void)
+{
+	return this->connected;
+}
+
+
+Uart::Uart(void) //  char *Port = "COM1", int baud = 9600, int Bitsize = 8, int StopBits = 1, int Parity = NOPARITY);
+{
+	//this->connected = false;
+	this->connected = this->initialise();
+	if (!this->connected)
+		MessageBox(NULL, L"Error initialising UART", L"Error", MB_OK);
+}
+
+int Uart::initialise(void)
 {
 	int STOPBITS;
+	DCB PortDCB;
+	//HANDLE         hPort;
+	COMMTIMEOUTS CommTimeouts;
 
-	hPort = CreateFile(TEXT("COM3"),			            // Name of the port 
+	this->hPort = CreateFile(TEXT("COM3"),			            // Name of the port 
 		GENERIC_READ | GENERIC_WRITE,     // Access (read-write) mode 
 		0,
 		NULL,
@@ -22,10 +38,9 @@ int SetupUart() //  char *Port = "COM1", int baud = 9600, int Bitsize = 8, int S
 		NULL);
 
 
-	if (hPort == INVALID_HANDLE_VALUE)
+	if (this->hPort == INVALID_HANDLE_VALUE)
 	{
-
-		printf("Port Open Failed\n");
+		MessageBox(NULL, L"Port Open Failed\n", L"Uart Problem", MB_OK);
 		return 0;
 	}
 
@@ -34,11 +49,11 @@ int SetupUart() //  char *Port = "COM1", int baud = 9600, int Bitsize = 8, int S
 
 	// Get the default port setting information.
 	GetCommState(hPort, &PortDCB);
-	 configure();
+	this->configure(&PortDCB);
 
 	// Retrieve the time-out parameters for all read and write operations  
 	GetCommTimeouts(hPort, &CommTimeouts);
-	configuretimeout();
+	this->configuretimeout(&CommTimeouts);
 
 
 
@@ -70,44 +85,43 @@ int SetupUart() //  char *Port = "COM1", int baud = 9600, int Bitsize = 8, int S
 	return 1;
 }
 
-int configure()
+int Uart::configure(DCB *PortDCB)
 {
-
-
 	// Change the DCB structure settings
-	PortDCB.fBinary = FALSE;                         // Binary mode; no EOF check
-	PortDCB.fParity = FALSE;                         // Enable parity checking 
-	PortDCB.fDsrSensitivity = FALSE;                // DSR sensitivity 
-	PortDCB.fErrorChar = FALSE;                     // Disable error replacement 
-	PortDCB.fOutxDsrFlow = FALSE;                   // No DSR output flow control 
-	PortDCB.fAbortOnError = FALSE;                  // Do not abort reads/writes on error
-	PortDCB.fNull = FALSE;                          // Disable null stripping 
-	PortDCB.fTXContinueOnXoff = FALSE;                // XOFF continues Tx 
+	PortDCB->fBinary = FALSE;                         // Binary mode; no EOF check
+	PortDCB->fParity = FALSE;                         // Enable parity checking 
+	PortDCB->fDsrSensitivity = FALSE;                // DSR sensitivity 
+	PortDCB->fErrorChar = FALSE;                     // Disable error replacement 
+	PortDCB->fOutxDsrFlow = FALSE;                   // No DSR output flow control 
+	PortDCB->fAbortOnError = FALSE;                  // Do not abort reads/writes on error
+	PortDCB->fNull = FALSE;                          // Disable null stripping 
+	PortDCB->fTXContinueOnXoff = FALSE;                // XOFF continues Tx 
 
-	PortDCB.BaudRate = 9600;
-	PortDCB.ByteSize = 8;
-	PortDCB.Parity = NOPARITY;
-	PortDCB.StopBits = ONESTOPBIT;
+	PortDCB->BaudRate = 9600;
+	PortDCB->ByteSize = 8;
+	PortDCB->Parity = NOPARITY;
+	PortDCB->StopBits = ONESTOPBIT;
 	
 
 	return 1;
 }
-int configuretimeout()
+
+int Uart::configuretimeout(COMMTIMEOUTS *CommTimeouts)
 {
-	//memset(&CommTimeouts, 0x00, sizeof(CommTimeouts)); 
-	CommTimeouts.ReadIntervalTimeout = 50;
-	CommTimeouts.ReadTotalTimeoutConstant = 50;
-	CommTimeouts.ReadTotalTimeoutMultiplier = 10;
-	CommTimeouts.WriteTotalTimeoutMultiplier = 10;
-	CommTimeouts.WriteTotalTimeoutConstant = 50;
+	memset(CommTimeouts, 0x00, sizeof(CommTimeouts)); 
+	CommTimeouts->ReadIntervalTimeout = 50;
+	CommTimeouts->ReadTotalTimeoutConstant = 50;
+	CommTimeouts->ReadTotalTimeoutMultiplier = 10;
+	CommTimeouts->WriteTotalTimeoutMultiplier = 10;
+	CommTimeouts->WriteTotalTimeoutConstant = 50;
 	return 1;
 }
 
-int WriteUart(unsigned char *buf1, int len) // , HANDLE hPort)
+int Uart::WriteUart(unsigned char *buf1, int len) // , HANDLE hPort)
 {
 	DWORD dwNumBytesWritten;
 
-	WriteFile(hPort, buf1, len, &dwNumBytesWritten, NULL);
+	WriteFile(this->hPort, buf1, len, &dwNumBytesWritten, NULL);
 
 	if (dwNumBytesWritten > 0)
 	{
@@ -123,14 +137,16 @@ int WriteUart(unsigned char *buf1, int len) // , HANDLE hPort)
 }
 
 
-int ReadUart(int len) // , HANDLE hPort)
+
+int Uart::ReadUart(unsigned char *buf, int len) // , HANDLE hPort)
 {
 	BOOL ret;
 	DWORD dwRead;
 	BOOL fWaitingOnRead = FALSE;
 	OVERLAPPED osReader = { 0 };
 	unsigned long retlen = 0;
-
+	std::ostringstream str;
+	char buffer[33];
 	// Create the overlapped event. Must be closed before exiting to avoid a handle leak.
 
 	osReader.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -138,27 +154,22 @@ int ReadUart(int len) // , HANDLE hPort)
 		printf("Error in creating Overlapped event\n");
 	if (!fWaitingOnRead)
 	{
-		if (!ReadFile(hPort, buf2, len, &dwRead, &osReader))
-
+		if (!ReadFile(this->hPort, buf, len, &dwRead, &osReader))
 		{
-
-			printf("could not read UART\n");
+			return -1;
+			// printf("could not read UART\n");
 		}
 		else
 		{
-
 			// MessageBox (NULL, L"ReadFile Suceess" ,L"Success", MB_OK);
 		}
 
 	}
-
-
-
-
-
+	
 	if (dwRead > 0)
 	{
-		//MessageBox (NULL, L"Read DATA Success" ,L"Success", MB_OK);//If we have data
+
+		MessageBox (NULL, CStringW(buf) ,L"Success", MB_OK);//If we have data
 		return (int)retlen;
 	}
 	//return the length
@@ -166,8 +177,8 @@ int ReadUart(int len) // , HANDLE hPort)
 	else return 0;     //else no data has been read
 }
 
-int CloseUart()
+int Uart::CloseUart()
 {
-	CloseHandle(hPort);
+	CloseHandle(this->hPort);
 	return 1;
 }

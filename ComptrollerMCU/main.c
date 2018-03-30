@@ -89,7 +89,7 @@ int main(void)
 				case 'I':
 					// init 
 					num_leds = uartReceiveCharBlocking();
-					num_leds |= (uartReceiveCharBlocking() << 8);
+					num_leds |= ((uint16_t) uartReceiveCharBlocking() << 8);
 
 					uartWriteString("setting num leds ");
 					uartWriteDec16(num_leds);

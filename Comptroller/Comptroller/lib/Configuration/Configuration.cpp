@@ -8,7 +8,7 @@ Config::Config()
 	ledStrings = true;
 	razer = false;
 	asus = false;
-	qmk = true;
+	qmk = false;
 	logitech = false;
 
 	manualControl = true;

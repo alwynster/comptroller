@@ -37,6 +37,7 @@ namespace Comptroller {
 		MyForm(void)
 		{
 			this->guiInitialised = false;
+			this->appInitialised = false;
 			this->msi = gcnew MSIAfterBurnerPlugin();
 			this->config = gcnew Config();
 
@@ -48,12 +49,11 @@ namespace Comptroller {
 			this->updateComponents();
 			this->initTempControl();
 			this->updateTempControl();
-			this->initQMK();
 
 			//
 			//TODO: Konstruktorcode hier hinzuf�gen.
 			//
-
+			this->appInitialised = true;
 		}
 
 		void debug();
@@ -97,7 +97,7 @@ namespace Comptroller {
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::CheckBox^  asusCheckBox;
 
-	private: Config ^ config;
+	public: Config ^ config;
 	private: System::Windows::Forms::Panel^  panel6;
 	private: System::Windows::Forms::CheckBox^  tempControlCheckBox;
 
@@ -111,6 +111,7 @@ namespace Comptroller {
 	private: System::Windows::Forms::CheckBox^  debugCheckBox;
 	private: System::Windows::Forms::CheckBox^  qmkCheckBox;
 	private: System::Windows::Forms::ComboBox^  qmkList;
+	private: System::Windows::Forms::RadioButton^  ledStringConnected;
 
 	private: System::ComponentModel::IContainer^  components;
 
@@ -165,6 +166,7 @@ namespace Comptroller {
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->updateTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->debugCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->ledStringConnected = (gcnew System::Windows::Forms::RadioButton());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->greenBar))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel4->SuspendLayout();
@@ -511,11 +513,23 @@ namespace Comptroller {
 			this->debugCheckBox->UseVisualStyleBackColor = true;
 			this->debugCheckBox->CheckedChanged += gcnew System::EventHandler(this, &MyForm::debugCheckBox_CheckedChanged);
 			// 
+			// ledStringConnected
+			// 
+			this->ledStringConnected->AutoSize = true;
+			this->ledStringConnected->Location = System::Drawing::Point(533, 42);
+			this->ledStringConnected->Name = L"ledStringConnected";
+			this->ledStringConnected->Size = System::Drawing::Size(118, 17);
+			this->ledStringConnected->TabIndex = 9;
+			this->ledStringConnected->TabStop = true;
+			this->ledStringConnected->Text = L"ledStringConnected";
+			this->ledStringConnected->UseVisualStyleBackColor = true;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(844, 667);
+			this->Controls->Add(this->ledStringConnected);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->debugCheckBox);
 			this->Controls->Add(this->panel6);
@@ -560,17 +574,20 @@ namespace Comptroller {
 	public: Asus ^ asus;
 	public: QMK ^ qmk;
 	public: Logitech ^ logitech;
+	//public: Uart ^ uart;
+
+	public: void setLedStringsConnected(bool connected);
 
 	private: System::Void measureButton_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void MyForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 		ledString3->staticColour(BLACK);
-		ledString1->staticColour(BLACK);
-		CloseUart();
+		//ledString1->staticColour(BLACK);
 	}
 
 	private: void updateComponents();
 	private: void initComponents();
 	private: bool guiInitialised;
+	private: bool appInitialised;
 	private: void initQMK();
 	private: void initTempControl();
 	private: void updateTempControl();

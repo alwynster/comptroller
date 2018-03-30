@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include "LED.h"
-
+#include "../UART/UART.h"
 //#define NUM_LEDS 30
 //#define BUFFER_SIZE (2 + NUM_LEDS * 3)
 
@@ -25,6 +25,9 @@ protected:
 
 	//uint8_t *buffer;
 	Colour ^leds;
+
+//private:
+	public: Uart ^ uart;
 
 	//void clearBuffer(void);
 

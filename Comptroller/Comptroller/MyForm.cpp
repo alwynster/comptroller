@@ -31,10 +31,13 @@ void Main(array<String^>^ args) {
 	Application::SetCompatibleTextRenderingDefault(false);
 	Comptroller::MyForm form;
 
-	SetupUart();
-	form.ledString1 = gcnew LEDController(0, 120);
+	//form.setLedStringsConnected( > 0);
+	//form.ledString1 = gcnew LEDController(0, 30);
 	form.ledString3 = gcnew LEDController(2, 2);
-
+	if (!form.ledString3->uart->isOpen())
+		form.config->ledStrings = false;
+	else
+		form.setLedStringsConnected(true);
 
 	//LEDController ledString2 = LEDController(1, 5);
 	//LEDController ledString3 = LEDController(2, 1);
@@ -51,7 +54,6 @@ void Main(array<String^>^ args) {
 
 
 	//form.ledString3->staticColour(RED);
-
 
 	Application::Run(%form);
 
@@ -106,7 +108,7 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 	}
 	if (config->ledStrings)
 	{
-		ledString1->staticColour(colour);
+		//ledString1->staticColour(colour);
 		ledString3->staticColour(colour);
 	}
 	if (config->asus)
@@ -143,6 +145,11 @@ System::Void Comptroller::MyForm::colourBar_ValueChanged(System::Object^  sender
 	this->staticColour(Colour::FromRGB(r, g, b));
 }
 
+void Comptroller::MyForm::setLedStringsConnected(bool connected)
+{
+	this->ledStringConnected->Checked = connected;
+}
+
 System::Void Comptroller::MyForm::componentCheckBox_CheckedChanged(System::Object ^ sender, System::EventArgs ^ e)
 {
 	this->updateComponents();
@@ -154,15 +161,15 @@ void Comptroller::MyForm::initComponents()
 	this->ledStringsCheckBox->Checked = config->ledStrings;
 	this->asusCheckBox->Checked = config->asus;
 	this->razerCheckBox->Checked = config->razer;
+	this->logitechCheckBox->Checked = config->logitech;
 
 	this->guiInitialised = true;
-	this->logitechCheckBox->Checked = config->logitech;
 }
 
 // gui to active
 void Comptroller::MyForm::updateComponents()
 {
-	if (!guiInitialised) return;
+	if (!guiInitialised || !appInitialised) return;
 
 	//this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked);
 	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked, this->logitechCheckBox->Checked);
@@ -178,7 +185,10 @@ void Comptroller::MyForm::updateComponents()
 			asus = gcnew Asus();
 	if (this->config->qmk)
 		if (qmk == nullptr)
+		{
 			qmk = gcnew QMK();
+			this->initQMK();
+		}
 
 	if (this->config->logitech)
 		if (logitech == nullptr)
