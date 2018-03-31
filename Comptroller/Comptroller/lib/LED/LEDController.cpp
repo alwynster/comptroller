@@ -8,32 +8,51 @@
 #include <atlstr.h>
 
 void setBufferColour(uint8_t *buffer, uint8_t r, uint8_t g, uint8_t b);
+#define SERIAL_TIMEOUT 5000
 
 LEDController::LEDController(std::list<uint16_t> numLeds)
 {
 	// do not allow colour update before previous is done
 	this->updating = false;
 
-	this->serial = new serial::Serial("COM3", 250000, serial::Timeout::simpleTimeout(1000));
+	this->serial = new serial::Serial("COM3", 9600, serial::Timeout::simpleTimeout(SERIAL_TIMEOUT));
 	this->serial->flush();
-	Sleep(1000); // takes the bootloader some time to load...
-	std::string readstr = this->serial->readline(200, "\n");
+	//Sleep(1000); 
+	std::string readstr, readstr2;
+	bool match = false;
+	for (int i = 0; i < 5; i++)
+	{
+		this->serial->write("H0");
+		readstr = this->serial->readline(200, "\n");
+		if (readstr.length() == 2)
+			match = readstr.front() == 'H';
+		
+		if (match)
+			break;
+	}
+	//while (!match);
+
+	if (!match)
+	{
+		// takes the bootloader some time to load
+		this->serial->close();
+		MessageBox(NULL, L"Nothing received at startup", L"UART Fail", MB_OK);
+		return;
+	}
+
+	//this->serial->flush();
+	this->readAll();
+	this->serial->setTimeout(serial::Timeout::simpleTimeout(SERIAL_TIMEOUT));
+
+	
 	//if (readstr.length() > 0)
 	//	MessageBox(NULL, CStringW(readstr.c_str()), L"UART Success", MB_OK);
 
-	if (readstr.length() == 0)
-	{
+	/*if (readstr.length() == 0)
+	{*/
 		// try handshake to see if mcu already running
-		this->serial->write("H0");
-		readstr = this->readline();
-
-		if (readstr.length() == 0)
-		{
-			this->serial->close();
-			MessageBox(NULL, L"Nothing received at startup", L"UART Fail", MB_OK);
-			return;
-		}
-	}
+		
+	//}
 	//MessageBox(NULL, CStringW(this->serial->readline().c_str()), L"UART Success", MB_OK);
 
 	//this->uart = gcnew Uart();
@@ -47,7 +66,7 @@ LEDController::LEDController(std::list<uint16_t> numLeds)
 
 	// set number of all used strings
 	this->numLedStrings = numLeds.size();
-	for (uint8_t i = 0; i < numLeds.size(); i++)
+	for (uint8_t i = 0; i < numLedStrings; i++)
 	{
 		this->setNumLeds(i, numLeds.front());
 		numLeds.pop_front();
@@ -65,6 +84,14 @@ std::string LEDController::readline(void)
 	std::string str = this->serial->readline(200, "\n");
 	if (str.length() == 0)
 		this->serial->close();
+	return str;
+}
+
+std::string LEDController::readAll(void)
+{
+	std::string str = "";
+	if (this->serial->available() > 0)
+		str = this->serial->read(this->serial->available());
 	return str;
 }
 
@@ -97,6 +124,8 @@ void LEDController::setNumLeds(uint8_t index, uint16_t numLeds)
 	//int readNum = 0; 
 	std::string readStr = "";
 	
+	// weird flashing here on second string
+	// related to animation... turned it off
 
 	readStr = this->readline();
 	//if (readStr.length() > 0)
@@ -104,6 +133,8 @@ void LEDController::setNumLeds(uint8_t index, uint16_t numLeds)
 	//else
 	if (readStr.length() == 0)
 		MessageBox(NULL, L"Nothing received", L"UART Fail", MB_OK);
+	else if (readStr.front() != 'I')
+		MessageBox(NULL, CStringW(readStr.c_str()), L"Incorrect response", MB_OK);
 
 	//printf("Setting string %d to %d LEDs\n", this->index, this->numLeds);
 
@@ -148,7 +179,8 @@ bool LEDController::staticColour(uint8_t index, uint8_t red, uint8_t green, uint
 		//MessageBox(NULL, CStringW(readStr.c_str()), L"UART Success", MB_OK);
 	//else
 		MessageBox(NULL, L"Nothing received", L"UART Fail", MB_OK);
-
+	else if (readStr.front() != 'S')
+		MessageBox(NULL, CStringW(readStr.c_str()), L"Incorrect response", MB_OK);
 	//uart->WriteUart(buffer, size);
 	
 	delete[] buffer;

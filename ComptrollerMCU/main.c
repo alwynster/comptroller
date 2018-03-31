@@ -19,7 +19,7 @@ int main(void)
 	PORTB &= ~_BV(5);
 
 	uartInit(&uartReceive);
-	uartWriteLine("Starting...");
+	// uartWriteLine("Starting...");
 	// _delay_ms(500);
 
 	ledString leds1, leds2, leds3;
@@ -32,8 +32,8 @@ int main(void)
 	updateNumLeds(&leds3, 2);
 
 	ledStatic(&leds1, 0, 0, 0);
-	ledStatic(&leds2, 0, 255, 0);
-	ledStatic(&leds3, 255, 255, 255);
+	// ledStatic(&leds2, 0, 255, 0);
+	// ledStatic(&leds3, 255, 255, 255);
 
 	// leds3.animationLength = 2;
 	// leds3.animationSteps = 1000;
@@ -91,6 +91,7 @@ int main(void)
 			}		
 
 
+			uartWriteChar(uart);
 
 			// receive data
 			switch(uart)
@@ -98,20 +99,33 @@ int main(void)
 
 				case 'H':
 					// handshake
-					uartWriteLine("H");
+					PORTB |= _BV(5);
+					_delay_ms(100);
+					PORTB &= ~_BV(5);
+					_delay_ms(100);
+
+					uartNewLine();
 					break;
-					
+
 				case 'I':
 					// init 
 					num_leds = uartReceiveCharBlocking();
 					num_leds |= ((uint16_t) uartReceiveCharBlocking() << 8);
 
 
-					updateNumLeds(string, num_leds);
-
-					uartWriteString("setting num leds ");
+					uartWriteString("setting num leds on ");
+					uartWriteDec8(index);
+					uartWriteString(" to ");
 					uartWriteDec16(num_leds);
-					uartNewLine();					
+					uartNewLine();	
+					
+
+					updateNumLeds(string, num_leds);
+				
+					// uartWriteLine("DONE");
+					// uartWriteDec16(num_leds);
+					// uartNewLine();	
+					
 
 					// uartWriteLine("Done");
 
@@ -166,18 +180,18 @@ int main(void)
 			}
 		}
 		// otherwise check if leds are breathing
-		else
-		{
-			ledAnimate(&leds1);
-			if (uartAvailable())
-				continue;
-			ledAnimate(&leds2);
-			if (uartAvailable())
-				continue;
-			ledAnimate(&leds3);
-			if (uartAvailable())
-				continue;
-		}
+		// else
+		// {
+		// 	ledAnimate(&leds1);
+		// 	if (uartAvailable())
+		// 		continue;
+		// 	ledAnimate(&leds2);
+		// 	if (uartAvailable())
+		// 		continue;
+		// 	ledAnimate(&leds3);
+		// 	if (uartAvailable())
+		// 		continue;
+		// }
 	}
 	return 0;
 }

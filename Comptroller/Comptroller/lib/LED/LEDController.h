@@ -35,6 +35,7 @@ protected:
 	//public: Uart ^ uart;
 private:
 	std::string readline(void);
+	std::string readAll(void);
 
 private:
 	bool updating;

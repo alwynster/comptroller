@@ -11,6 +11,8 @@
 void initLedString(ledString *string, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin)
 {
   string->buffer = NULL;
+  string->animationIndexes = NULL;
+  string->animationDirections = NULL;
   
   string->ddr = ddr;
   string->port = port;
@@ -35,11 +37,14 @@ void updateNumLeds(ledString *string, uint16_t numberLeds)
   string->numLeds = numberLeds;
 
   if(string->buffer)
+  {
+    // uartWriteLine("need to clear buffer");
     free(string->buffer);
-  if(string->animationIndexes)
-    free(string->animationIndexes);  
-  if(string->animationDirections)
-    free(string->animationDirections);
+  }
+  // if(string->animationIndexes)
+  //   free(string->animationIndexes);  
+  // if(string->animationDirections)
+  //   free(string->animationDirections);
 
   // string->animationIndexes = (uint16_t *) malloc(string->numLeds * sizeof(uint16_t));
   // string->animationDirections = (animationDirection *) malloc(string->numLeds * sizeof(animationDirection));

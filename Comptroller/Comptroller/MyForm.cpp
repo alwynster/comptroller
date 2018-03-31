@@ -106,7 +106,7 @@ void Comptroller::MyForm::staticColour(Colour ^colour)
 	if (config->ledStrings)
 	{
 		//ledString1->staticColour(colour);
-		if (!ledString->staticColour(0, colour))
+		if (!ledString->staticColour(2, colour))
 			this->setLedStringsConnected(false);
 	}
 	if (config->asus)
