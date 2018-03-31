@@ -178,7 +178,7 @@ void Comptroller::MyForm::updateComponents()
 	if (!guiInitialised || !appInitialised) return;
 
 	//this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked);
-	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked, this->logitechCheckBox->Checked);
+	this->config->setComponents(this->ledStringsCheckBox->Checked, this->asusCheckBox->Checked, this->razerCheckBox->Checked, this->logitechCheckBox->Checked, this->qmkCheckBox->Checked);
 
 	if (this->config->ledStrings)
 		if (ledString == nullptr)

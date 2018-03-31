@@ -22,5 +22,5 @@ public:
 	Config();
 	~Config();
 
-	void setComponents(bool ledStrings, bool asus, bool razer, bool logitech);
+	void setComponents(bool ledStrings, bool asus, bool razer, bool logitech, bool qmk);
 };

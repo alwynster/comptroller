@@ -37,10 +37,11 @@ Config::~Config()
 
 }
 
-void Config::setComponents(bool ledStrings, bool asus, bool razer, bool logitech)
+void Config::setComponents(bool ledStrings, bool asus, bool razer, bool logitech, bool qmk)
 {
 	this->ledStrings = ledStrings;
 	this->asus = asus;
 	this->razer = razer;
 	this->logitech = logitech;
+	this->qmk = qmk;
 }
