@@ -73,109 +73,11 @@ int main(void)
 		set_sleep_mode(SLEEP_MODE_IDLE);
 		sleep_mode();
 	}
-	// while(1)
-	// {
-	// 	// waitign for new commands...
-	// 	PORTB |= _BV(5);
-
-	// 	// check if new uart data is available
-	// 	if (uartAvailable())
-	// 	{
-
-	// 		uart = 0;	
-	// 		// receive configs
-	// 		// while (uart != 'S')
-	// 		{
-	// 			uart = uartReceiveCharBlocking();
-	// 			PORTB &= ~_BV(5);
-
-	// 			// uartWriteString("receiving...");
-	// 			// _delay_ms(500);
-	// 		}
-
-	// 		index = uartReceiveCharBlocking();
-
-	// 		// num_leds = uartReceiveCharBlocking();
-
-	// 		// num_leds |= (uartReceiveCharBlocking()) << 8;
-			
-
-	// 		switch(index)
-	// 		{
-	// 			case 0:
-	// 				string = &leds1;
-	// 				break;
-	// 			case 1:
-	// 				string = &leds2;
-	// 				break;
-	// 			case 2:
-	// 			default:
-	// 				string = &leds3;
-	// 				break;
-	// 		}		
-
-
-	// 		uartWriteChar(uart);
 
 	// 		// receive data
 	// 		switch(uart)
 	// 		{
 
-	// 			case 'H':
-	// 				// handshake
-	// 				PORTB |= _BV(5);
-	// 				_delay_ms(100);
-	// 				PORTB &= ~_BV(5);
-	// 				_delay_ms(100);
-
-	// 				uartNewLine();
-	// 				break;
-
-	// 			case 'I':
-	// 				// init 
-	// 				num_leds = uartReceiveCharBlocking();
-	// 				num_leds |= ((uint16_t) uartReceiveCharBlocking() << 8);
-
-
-	// 				uartWriteString("setting num leds on ");
-	// 				uartWriteDec8(index);
-	// 				uartWriteString(" to ");
-	// 				uartWriteDec16(num_leds);
-	// 				uartNewLine();	
-					
-
-	// 				updateNumLeds(string, num_leds);
-				
-	// 				// uartWriteLine("DONE");
-	// 				// uartWriteDec16(num_leds);
-	// 				// uartNewLine();	
-					
-
-	// 				// uartWriteLine("Done");
-
-
-
-	// 				break;
-
-	// 			case 'S':
-	// 				// receive colour
-	// 				r = uartReceiveCharBlocking();
-	// 				g = uartReceiveCharBlocking();
-	// 				b = uartReceiveCharBlocking();
-
-
-	// 				ledStatic(string, r, g, b);
-	// 				uartWriteString("Setting string ");
-	// 				uartWriteDec8(index);
-	// 				uartWriteString(" to (");
-	// 				uartWriteDec8(r);
-	// 				uartWriteString(", ");
-	// 				uartWriteDec8(g);
-	// 				uartWriteString(", ");
-	// 				uartWriteDec8(b);
-	// 				uartWriteLine(")");
-
-	// 				break;
 	// 			case 'W':
 	// 				string->animationLength = uartReceiveCharBlocking();
 	// 			case 'B':
@@ -220,7 +122,7 @@ int main(void)
 	return 0;
 }
 
-
+// uart rx interrupt
 void uartReceive(uint8_t data)
 {
 	switch(currentUartMode)
