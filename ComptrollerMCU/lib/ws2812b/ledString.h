@@ -28,7 +28,7 @@ typedef struct {
 	animationType animation;
 } ledString;
 
-void initLedString(ledString *string, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin);
+void initLedString(ledString *string, uint8_t index, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin);
 void updateNumLeds(ledString *string, uint16_t numberLeds);
 void ledStatic(ledString *string, uint8_t red, uint8_t green, uint8_t blue);
 void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2);

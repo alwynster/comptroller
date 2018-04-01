@@ -113,6 +113,7 @@ namespace Comptroller {
 	private: System::Windows::Forms::CheckBox^  qmkCheckBox;
 	private: System::Windows::Forms::ComboBox^  qmkList;
 	private: System::Windows::Forms::RadioButton^  ledStringConnected;
+	private: System::Windows::Forms::Button^  whiteButton;
 
 	private: System::ComponentModel::IContainer^  components;
 
@@ -168,6 +169,7 @@ namespace Comptroller {
 			this->updateTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->debugCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->ledStringConnected = (gcnew System::Windows::Forms::RadioButton());
+			this->whiteButton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->greenBar))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel4->SuspendLayout();
@@ -362,7 +364,7 @@ namespace Comptroller {
 			this->panel5->Controls->Add(this->razerCheckBox);
 			this->panel5->Controls->Add(this->ledStringsCheckBox);
 			this->panel5->Controls->Add(this->logitechCheckBox);
-			this->panel5->Location = System::Drawing::Point(625, 257);
+			this->panel5->Location = System::Drawing::Point(625, 293);
 			this->panel5->Name = L"panel5";
 			this->panel5->Size = System::Drawing::Size(113, 140);
 			this->panel5->TabIndex = 7;
@@ -439,7 +441,7 @@ namespace Comptroller {
 			// 
 			// label4
 			// 
-			this->label4->Location = System::Drawing::Point(626, 238);
+			this->label4->Location = System::Drawing::Point(626, 274);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(112, 16);
 			this->label4->TabIndex = 8;
@@ -452,7 +454,7 @@ namespace Comptroller {
 			this->panel6->Controls->Add(this->tempControlList);
 			this->panel6->Controls->Add(this->manualControlBox);
 			this->panel6->Controls->Add(this->tempControlCheckBox);
-			this->panel6->Location = System::Drawing::Point(625, 419);
+			this->panel6->Location = System::Drawing::Point(625, 455);
 			this->panel6->Name = L"panel6";
 			this->panel6->Size = System::Drawing::Size(113, 92);
 			this->panel6->TabIndex = 7;
@@ -492,7 +494,7 @@ namespace Comptroller {
 			// 
 			// label5
 			// 
-			this->label5->Location = System::Drawing::Point(626, 400);
+			this->label5->Location = System::Drawing::Point(626, 436);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(112, 16);
 			this->label5->TabIndex = 8;
@@ -525,6 +527,16 @@ namespace Comptroller {
 			this->ledStringConnected->Text = L"ledStringConnected";
 			this->ledStringConnected->UseVisualStyleBackColor = true;
 			// 
+			// whiteButton
+			// 
+			this->whiteButton->Location = System::Drawing::Point(625, 231);
+			this->whiteButton->Name = L"whiteButton";
+			this->whiteButton->Size = System::Drawing::Size(113, 40);
+			this->whiteButton->TabIndex = 2;
+			this->whiteButton->Text = L"White";
+			this->whiteButton->UseVisualStyleBackColor = true;
+			this->whiteButton->Click += gcnew System::EventHandler(this, &MyForm::whiteButton_Click);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -538,6 +550,7 @@ namespace Comptroller {
 			this->Controls->Add(this->panel5);
 			this->Controls->Add(this->colourPanel);
 			this->Controls->Add(this->panel1);
+			this->Controls->Add(this->whiteButton);
 			this->Controls->Add(this->blueButton);
 			this->Controls->Add(this->greenButton);
 			this->Controls->Add(this->redButton);
@@ -619,7 +632,8 @@ namespace Comptroller {
 	private: System::Void qmkList_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
 	{
 	}
-	};
+	private: System::Void whiteButton_Click(System::Object^  sender, System::EventArgs^  e);
+};
 }
 //=======
 //#pragma once

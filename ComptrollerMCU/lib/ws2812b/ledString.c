@@ -8,12 +8,14 @@
 
 #include "../uart/uart.h"
 
-void initLedString(ledString *string, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin)
+void initLedString(ledString *string, uint8_t index, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin)
 {
   string->buffer = NULL;
   string->animationIndexes = NULL;
   string->animationDirections = NULL;
   
+  string->index = index;
+
   string->ddr = ddr;
   string->port = port;
   string->pin = pin;

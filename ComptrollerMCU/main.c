@@ -3,8 +3,21 @@
 #include "lib/uart/uart.h"
 #include <avr/io.h>
 #include <util/delay.h>
- 
+#include <avr/sleep.h>
+#include <avr/interrupt.h>
+
 void uartReceive(uint8_t data);
+typedef enum { uartIdle, uartIndex, uartRGB, uartNumLeds } uartState;
+volatile uartState currentUartMode;
+uint8_t uartStateCount; 
+
+uint8_t uartCommand;
+uint16_t numLeds;
+// uint8_t index;
+uint8_t r, g, b;
+
+ledString leds1, leds2, leds3;
+ledString volatile *string;
 
 int main(void)
 {
@@ -22,16 +35,15 @@ int main(void)
 	// uartWriteLine("Starting...");
 	// _delay_ms(500);
 
-	ledString leds1, leds2, leds3;
-	initLedString(&leds1, &DDRC, &PORTC, 0);
-	initLedString(&leds2, &DDRB, &PORTB, 3);
-	initLedString(&leds3, &DDRD, &PORTD, 2);
+	initLedString(&leds1, 0, &DDRC, &PORTC, 0);
+	initLedString(&leds2, 1, &DDRB, &PORTB, 3);
+	initLedString(&leds3, 2, &DDRD, &PORTD, 2);
 
 	updateNumLeds(&leds1, 120);
 	updateNumLeds(&leds2, 2);
 	updateNumLeds(&leds3, 2);
 
-	ledStatic(&leds1, 0, 0, 0);
+	ledStatic(&leds3, 0, 0, 0);
 	// ledStatic(&leds2, 0, 255, 0);
 	// ledStatic(&leds3, 255, 255, 255);
 
@@ -42,41 +54,193 @@ int main(void)
 
 // void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2)
 
-	uint8_t uart = 0x00;
-	uint8_t r, g, b;
-	uint8_t r2, g2, b2;
-	uint16_t num_leds = 0;
-	uint8_t index;
-	ledString *string;
+	uartStateCount = 0;
+
+	// uint8_t uart = 0x00;
+	// uint8_t r, g, b;
+	// uint8_t r2, g2, b2;
+	// uint16_t num_leds = 0;
+	// uint8_t index;
 
 	while(1)
 	{
-		// waitign for new commands...
 		PORTB |= _BV(5);
+		_delay_ms(500);
+		PORTB &= ~_BV(5);
+		_delay_ms(500);
+		sei();
 
-		// check if new uart data is available
-		if (uartAvailable())
-		{
+		set_sleep_mode(SLEEP_MODE_IDLE);
+		sleep_mode();
+	}
+	// while(1)
+	// {
+	// 	// waitign for new commands...
+	// 	PORTB |= _BV(5);
 
-			uart = 0;	
-			// receive configs
-			// while (uart != 'S')
-			{
-				uart = uartReceiveCharBlocking();
-				PORTB &= ~_BV(5);
+	// 	// check if new uart data is available
+	// 	if (uartAvailable())
+	// 	{
 
-				// uartWriteString("receiving...");
-				// _delay_ms(500);
-			}
+	// 		uart = 0;	
+	// 		// receive configs
+	// 		// while (uart != 'S')
+	// 		{
+	// 			uart = uartReceiveCharBlocking();
+	// 			PORTB &= ~_BV(5);
 
-			index = uartReceiveCharBlocking();
+	// 			// uartWriteString("receiving...");
+	// 			// _delay_ms(500);
+	// 		}
 
-			// num_leds = uartReceiveCharBlocking();
+	// 		index = uartReceiveCharBlocking();
 
-			// num_leds |= (uartReceiveCharBlocking()) << 8;
+	// 		// num_leds = uartReceiveCharBlocking();
+
+	// 		// num_leds |= (uartReceiveCharBlocking()) << 8;
 			
 
-			switch(index)
+	// 		switch(index)
+	// 		{
+	// 			case 0:
+	// 				string = &leds1;
+	// 				break;
+	// 			case 1:
+	// 				string = &leds2;
+	// 				break;
+	// 			case 2:
+	// 			default:
+	// 				string = &leds3;
+	// 				break;
+	// 		}		
+
+
+	// 		uartWriteChar(uart);
+
+	// 		// receive data
+	// 		switch(uart)
+	// 		{
+
+	// 			case 'H':
+	// 				// handshake
+	// 				PORTB |= _BV(5);
+	// 				_delay_ms(100);
+	// 				PORTB &= ~_BV(5);
+	// 				_delay_ms(100);
+
+	// 				uartNewLine();
+	// 				break;
+
+	// 			case 'I':
+	// 				// init 
+	// 				num_leds = uartReceiveCharBlocking();
+	// 				num_leds |= ((uint16_t) uartReceiveCharBlocking() << 8);
+
+
+	// 				uartWriteString("setting num leds on ");
+	// 				uartWriteDec8(index);
+	// 				uartWriteString(" to ");
+	// 				uartWriteDec16(num_leds);
+	// 				uartNewLine();	
+					
+
+	// 				updateNumLeds(string, num_leds);
+				
+	// 				// uartWriteLine("DONE");
+	// 				// uartWriteDec16(num_leds);
+	// 				// uartNewLine();	
+					
+
+	// 				// uartWriteLine("Done");
+
+
+
+	// 				break;
+
+	// 			case 'S':
+	// 				// receive colour
+	// 				r = uartReceiveCharBlocking();
+	// 				g = uartReceiveCharBlocking();
+	// 				b = uartReceiveCharBlocking();
+
+
+	// 				ledStatic(string, r, g, b);
+	// 				uartWriteString("Setting string ");
+	// 				uartWriteDec8(index);
+	// 				uartWriteString(" to (");
+	// 				uartWriteDec8(r);
+	// 				uartWriteString(", ");
+	// 				uartWriteDec8(g);
+	// 				uartWriteString(", ");
+	// 				uartWriteDec8(b);
+	// 				uartWriteLine(")");
+
+	// 				break;
+	// 			case 'W':
+	// 				string->animationLength = uartReceiveCharBlocking();
+	// 			case 'B':
+	// 				// receive colour
+	// 				r = uartReceiveCharBlocking();
+	// 				g = uartReceiveCharBlocking();
+	// 				b = uartReceiveCharBlocking();
+
+	// 				r2 = uartReceiveCharBlocking();
+	// 				g2 = uartReceiveCharBlocking();
+	// 				b2 = uartReceiveCharBlocking();
+
+	// 				string->animationSteps = uartReceiveCharBlocking();
+	// 				string->animationSteps |= (uartReceiveCharBlocking() << 8);
+
+	// 				updateNumLeds(string, num_leds);
+
+	// 				if (uart == 'B')
+	// 					ledBreathe(string, r, g, b, r2, g2, b2);
+	// 				else
+	// 					ledWave(string, r, g, b, r2, g2, b2);
+
+	// 				break;
+	// 			default:
+	// 				break;
+	// 		}
+	// 	}
+	// 	// otherwise check if leds are breathing
+	// 	// else
+	// 	// {
+	// 	// 	ledAnimate(&leds1);
+	// 	// 	if (uartAvailable())
+	// 	// 		continue;
+	// 	// 	ledAnimate(&leds2);
+	// 	// 	if (uartAvailable())
+	// 	// 		continue;
+	// 	// 	ledAnimate(&leds3);
+	// 	// 	if (uartAvailable())
+	// 	// 		continue;
+	// 	// }
+	// }
+	return 0;
+}
+
+
+void uartReceive(uint8_t data)
+{
+	switch(currentUartMode)
+	{
+		case uartIdle:
+			uartCommand = data;
+			switch(uartCommand)
+			{
+				case 'H':
+					uartWriteLine("H");
+					break;
+				default:
+					// every other command requires an index
+					currentUartMode = uartIndex;
+					break;
+			}
+			break;
+		case uartIndex:
+			// create led string pointer
+			switch(data)
 			{
 				case 0:
 					string = &leds1;
@@ -88,115 +252,87 @@ int main(void)
 				default:
 					string = &leds3;
 					break;
-			}		
+			}
 
+			uartStateCount = 0;
 
-			uartWriteChar(uart);
-
-			// receive data
-			switch(uart)
+			// what to receive next
+			switch(uartCommand)
 			{
-
-				case 'H':
-					// handshake
-					PORTB |= _BV(5);
-					_delay_ms(100);
-					PORTB &= ~_BV(5);
-					_delay_ms(100);
-
-					uartNewLine();
-					break;
-
 				case 'I':
-					// init 
-					num_leds = uartReceiveCharBlocking();
-					num_leds |= ((uint16_t) uartReceiveCharBlocking() << 8);
-
-
-					uartWriteString("setting num leds on ");
-					uartWriteDec8(index);
-					uartWriteString(" to ");
-					uartWriteDec16(num_leds);
-					uartNewLine();	
-					
-
-					updateNumLeds(string, num_leds);
-				
-					// uartWriteLine("DONE");
-					// uartWriteDec16(num_leds);
-					// uartNewLine();	
-					
-
-					// uartWriteLine("Done");
-
-
-
+					currentUartMode = uartNumLeds;
 					break;
-
 				case 'S':
-					// receive colour
-					r = uartReceiveCharBlocking();
-					g = uartReceiveCharBlocking();
-					b = uartReceiveCharBlocking();
-
-
-					ledStatic(string, r, g, b);
-					uartWriteString("Setting string ");
-					uartWriteDec8(index);
-					uartWriteString(" to (");
-					uartWriteDec8(r);
-					uartWriteString(", ");
-					uartWriteDec8(g);
-					uartWriteString(", ");
-					uartWriteDec8(b);
-					uartWriteLine(")");
-
-					break;
 				case 'W':
-					string->animationLength = uartReceiveCharBlocking();
 				case 'B':
-					// receive colour
-					r = uartReceiveCharBlocking();
-					g = uartReceiveCharBlocking();
-					b = uartReceiveCharBlocking();
-
-					r2 = uartReceiveCharBlocking();
-					g2 = uartReceiveCharBlocking();
-					b2 = uartReceiveCharBlocking();
-
-					string->animationSteps = uartReceiveCharBlocking();
-					string->animationSteps |= (uartReceiveCharBlocking() << 8);
-
-					updateNumLeds(string, num_leds);
-
-					if (uart == 'B')
-						ledBreathe(string, r, g, b, r2, g2, b2);
-					else
-						ledWave(string, r, g, b, r2, g2, b2);
-
+					currentUartMode = uartRGB;
 					break;
 				default:
+					currentUartMode = uartIdle;
 					break;
 			}
-		}
-		// otherwise check if leds are breathing
-		// else
-		// {
-		// 	ledAnimate(&leds1);
-		// 	if (uartAvailable())
-		// 		continue;
-		// 	ledAnimate(&leds2);
-		// 	if (uartAvailable())
-		// 		continue;
-		// 	ledAnimate(&leds3);
-		// 	if (uartAvailable())
-		// 		continue;
-		// }
+			break;
+		case uartNumLeds:
+			numLeds |= ((uint16_t) data) << ((uartStateCount++) * 8);
+
+			// finished receiving number of leds
+			if (uartStateCount == 2)
+			{
+				uartWriteChar(uartCommand);
+
+				uartWriteString("setting num leds on ");
+				uartWriteDec8(string->index);
+				uartWriteString(" to ");
+				uartWriteDec16(numLeds);
+				uartNewLine();	
+				
+
+				updateNumLeds(string, numLeds);
+				numLeds = 0; // clear variable for next string 
+				
+				currentUartMode = uartIdle;
+			}
+			break;
+		case uartRGB:
+			switch(uartStateCount)
+			{
+				case 0:
+					r = data;
+					break;
+				case 1:
+					g = data;
+					break;
+				case 2:
+					b = data;
+					break;
+				default:
+					currentUartMode = uartIdle;
+					break;
+			}
+
+			// received rgb
+			if (uartStateCount == 2)
+			{
+				ledStatic(string, r, g, b);
+				uartWriteChar(uartCommand);
+				uartWriteString("Setting string ");
+				uartWriteDec8(string->index);
+				uartWriteString(" to (");
+				uartWriteDec8(r);
+				uartWriteString(", ");
+				uartWriteDec8(g);
+				uartWriteString(", ");
+				uartWriteDec8(b);
+				uartWriteLine(")");
+
+				currentUartMode = uartIdle;
+			}
+
+			uartStateCount++;
+			break;
+		default:
+			// shouldn't happen
+			currentUartMode = uartIdle;
+			break;
 	}
-	return 0;
-}
-
-void uartReceive(uint8_t data)
-{
-
-}
+} 

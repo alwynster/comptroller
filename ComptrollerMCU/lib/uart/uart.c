@@ -55,7 +55,7 @@ void uartInit(void (*receiveHandler)(uint8_t))
 #if UART_2X
 	UCSR0A |= _BV(U2X0);
 #endif
-	UCSR0B = _BV(RXEN0) | _BV(TXEN0) | _BV(TXCIE0); // disabled interrupts for uart: | _BV(RXCIE0) | _BV(TXCIE0);
+	UCSR0B = _BV(RXEN0) | _BV(TXEN0) | _BV(RXCIE0) | _BV(TXCIE0);
 	UCSR0C = _BV(USBS0) | (3 << UCSZ00);
 
 	uartReceiveHandler = receiveHandler;

@@ -88,6 +88,11 @@ System::Void Comptroller::MyForm::blueButton_Click(System::Object ^ sender, Syst
 	staticColour(Colour::FromInt(BLUE));
 }
 
+System::Void Comptroller::MyForm::whiteButton_Click(System::Object ^ sender, System::EventArgs ^ e)
+{
+	staticColour(Colour::FromInt(WHITE));
+}
+
 void Comptroller::MyForm::staticColour(Colour ^colour)
 {
 	this->updateColourBars(colour);

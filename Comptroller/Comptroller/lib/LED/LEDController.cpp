@@ -22,7 +22,7 @@ LEDController::LEDController(std::list<uint16_t> numLeds)
 	bool match = false;
 	for (int i = 0; i < 5; i++)
 	{
-		this->serial->write("H0");
+		this->serial->write("H");
 		readstr = this->serial->readline(200, "\n");
 		if (readstr.length() == 2)
 			match = readstr.front() == 'H';
