@@ -34,7 +34,7 @@ void initLedString(ledString *string, uint8_t index, volatile uint8_t *ddr, vola
   string->animating = NONE;
 }
 
-void updateNumLeds(ledString *string, uint16_t numberLeds)
+void updateNumLeds(ledString volatile *string, uint16_t numberLeds)
 {
   string->numLeds = numberLeds;
 
@@ -54,7 +54,7 @@ void updateNumLeds(ledString *string, uint16_t numberLeds)
   memset(string->buffer, 0, 3 * string->numLeds);
 }
 
-void ledStatic(ledString *string, uint8_t red, uint8_t green, uint8_t blue)
+void ledStatic(ledString volatile *string, uint8_t red, uint8_t green, uint8_t blue)
 {
   uint8_t *ptr = string->buffer;
   for (uint16_t i = 0; i < string->numLeds; i++)
@@ -121,10 +121,6 @@ void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uin
   // string->animationIndex = 0;
 
   string->animation = WAVE;
-
-
-
-
 
   // uint8_t *ptr = string->buffer;
   // uint8_t index = 0; // counts to animationLength and down again
@@ -293,4 +289,78 @@ void ledAnimate(ledString *string)
   // }
 
   showLeds(string);
+}
+
+// https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+void ledRainbow(ledString volatile *string, animationDirection direction, uint16_t animationDelay)
+{
+	// rainbow uses hsv for easier transition
+	float C, X, S, V, m;
+
+	S = 1.0f; // saturation
+	V = 0.1f; // intensity
+
+	for (int i = 0; i < 50; i++)
+	{
+		for (float H = 0; H < 360; H += 1.0f)
+		{
+			C = S * V;
+			X = C * (1 - fabsf(fmodf((H / 60.0f), 2.0f) - 1.0f));
+			m = V - C;
+
+			float r, g, b;
+
+			if (H >= 0 && H < 60)
+			{
+				r = C;
+				g = X;
+				b = 0;
+			}
+			else if (H >= 60 && H < 120)
+			{
+				r = X;
+				g = C;
+				b = 0;
+			}
+			else if (H >= 0 && H < 180)
+			{
+				r = 0;
+				g = C;
+				b = X;
+			}
+			else if (H >= 0 && H < 240)
+			{
+				r = 0;
+				g = X;
+				b = C;
+			}
+			else if (H >= 0 && H < 300)
+			{
+				r = X;
+				g = 0;
+				b = C;
+			}
+			else // if (H >= 0 && H < 360)
+			{
+				r = C;
+				g = 0;
+				b = X;
+			}
+
+			// ignore adding m because it's 0
+
+			uint8_t *ptr = string->buffer;
+			for (uint16_t i = 0; i < string->numLeds; i++)
+			{
+				*ptr++ = (uint8_t)((g + m) * 255);
+				*ptr++ = (uint8_t)((r + m) * 255);
+				*ptr++ = (uint8_t)((b + m) * 255);
+			}
+			// memset(pixels, 255, numBytes);
+			showLeds(string);
+
+			_delay_ms(10);
+		}
+	}
+	string->animation = RAINBOW;
 }

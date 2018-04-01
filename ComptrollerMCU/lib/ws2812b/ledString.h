@@ -5,9 +5,9 @@
 
 // #define ANIMATION_STEPS 1000
 
-typedef enum byteOrderTmp{RGB, GRB} byteOrder;
-typedef enum animationTmp{FORWARD, BACKWARD} animationDirection;
-typedef enum animationTypeTmp{NONE, BREATHE, WAVE} animationType;
+typedef enum {RGB, GRB} byteOrder;
+typedef enum {FORWARD, BACKWARD} animationDirection;
+typedef enum {NONE, BREATHE, WAVE, RAINBOW} animationType;
 typedef struct {
 	uint16_t numLeds;
 	uint8_t index;
@@ -29,9 +29,10 @@ typedef struct {
 } ledString;
 
 void initLedString(ledString *string, uint8_t index, volatile uint8_t *ddr, volatile uint8_t *port, uint8_t pin);
-void updateNumLeds(ledString *string, uint16_t numberLeds);
-void ledStatic(ledString *string, uint8_t red, uint8_t green, uint8_t blue);
+void updateNumLeds(ledString volatile *string, uint16_t numberLeds);
+void ledStatic(ledString volatile *string, uint8_t red, uint8_t green, uint8_t blue);
 void ledWave(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2);
 void ledBreathe(ledString *string, uint8_t red1, uint8_t green1, uint8_t blue1, uint8_t red2, uint8_t green2, uint8_t blue2);
+void ledRainbow(ledString volatile *string, animationDirection direction, uint16_t animationDelay);
 void ledAnimate(ledString *string);
 #endif

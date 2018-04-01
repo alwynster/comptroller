@@ -44,6 +44,8 @@ int main(void)
 	updateNumLeds(&leds3, 2);
 
 	ledStatic(&leds3, 0, 0, 0);
+
+	ledRainbow(&leds3, FORWARD, 000000);
 	// ledStatic(&leds2, 0, 255, 0);
 	// ledStatic(&leds3, 255, 255, 255);
 
