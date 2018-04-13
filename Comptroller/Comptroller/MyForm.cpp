@@ -93,6 +93,21 @@ System::Void Comptroller::MyForm::whiteButton_Click(System::Object ^ sender, Sys
 	staticColour(Colour::FromInt(WHITE));
 }
 
+System::Void Comptroller::MyForm::rainbowButton_Click(System::Object ^ sender, System::EventArgs ^ e)
+{
+	rainbowColour();
+}
+
+void Comptroller::MyForm::rainbowColour(void)
+{
+	if (config->razer)
+	{
+		if (razer->HasRazer()) {
+			razer->Rainbow(false);
+		}
+	}
+}
+
 void Comptroller::MyForm::staticColour(Colour ^colour)
 {
 	this->updateColourBars(colour);
@@ -175,6 +190,8 @@ void Comptroller::MyForm::initComponents()
 	this->logitechCheckBox->Checked = config->logitech;
 
 	this->guiInitialised = true;
+
+	this->updateComponents();
 }
 
 // gui to active

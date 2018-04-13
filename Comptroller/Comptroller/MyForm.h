@@ -55,6 +55,8 @@ namespace Comptroller {
 			//TODO: Konstruktorcode hier hinzuf�gen.
 			//
 			this->appInitialised = true;
+
+			this->updateComponents();
 		}
 
 		void debug();
@@ -114,6 +116,7 @@ namespace Comptroller {
 	private: System::Windows::Forms::ComboBox^  qmkList;
 	private: System::Windows::Forms::RadioButton^  ledStringConnected;
 	private: System::Windows::Forms::Button^  whiteButton;
+	private: System::Windows::Forms::Button^  rainbowButton;
 
 	private: System::ComponentModel::IContainer^  components;
 
@@ -170,6 +173,7 @@ namespace Comptroller {
 			this->debugCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->ledStringConnected = (gcnew System::Windows::Forms::RadioButton());
 			this->whiteButton = (gcnew System::Windows::Forms::Button());
+			this->rainbowButton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->greenBar))->BeginInit();
 			this->panel1->SuspendLayout();
 			this->panel4->SuspendLayout();
@@ -519,7 +523,7 @@ namespace Comptroller {
 			// ledStringConnected
 			// 
 			this->ledStringConnected->AutoSize = true;
-			this->ledStringConnected->Location = System::Drawing::Point(533, 42);
+			this->ledStringConnected->Location = System::Drawing::Point(468, 65);
 			this->ledStringConnected->Name = L"ledStringConnected";
 			this->ledStringConnected->Size = System::Drawing::Size(118, 17);
 			this->ledStringConnected->TabIndex = 9;
@@ -537,6 +541,16 @@ namespace Comptroller {
 			this->whiteButton->UseVisualStyleBackColor = true;
 			this->whiteButton->Click += gcnew System::EventHandler(this, &MyForm::whiteButton_Click);
 			// 
+			// rainbowButton
+			// 
+			this->rainbowButton->Location = System::Drawing::Point(625, 44);
+			this->rainbowButton->Name = L"rainbowButton";
+			this->rainbowButton->Size = System::Drawing::Size(113, 43);
+			this->rainbowButton->TabIndex = 2;
+			this->rainbowButton->Text = L"Rainbow";
+			this->rainbowButton->UseVisualStyleBackColor = true;
+			this->rainbowButton->Click += gcnew System::EventHandler(this, &MyForm::rainbowButton_Click);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -553,6 +567,7 @@ namespace Comptroller {
 			this->Controls->Add(this->whiteButton);
 			this->Controls->Add(this->blueButton);
 			this->Controls->Add(this->greenButton);
+			this->Controls->Add(this->rainbowButton);
 			this->Controls->Add(this->redButton);
 			this->Controls->Add(this->measureButton);
 			this->Controls->Add(this->debugBox);
@@ -579,6 +594,7 @@ namespace Comptroller {
 		}
 #pragma endregion
 
+	public:	void rainbowColour(void);
 	public: void staticColour(Colour ^colour);
 
 	public: void updateColourBars(Colour ^colour);
@@ -633,6 +649,8 @@ namespace Comptroller {
 	{
 	}
 	private: System::Void whiteButton_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void rainbowButton_Click(System::Object^  sender, System::EventArgs^  e);
+
 };
 }
 //=======

@@ -5,8 +5,8 @@ Config::Config()
 	// load configuration from text here i guess
 	debug = true;
 
-	ledStrings = true;
-	razer = false;
+	ledStrings = false;
+	razer = true;
 	asus = false;
 	qmk = false;
 	logitech = false;

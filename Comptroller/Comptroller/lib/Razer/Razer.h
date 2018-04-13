@@ -11,6 +11,6 @@ public:
 	~Razer();
 
 	void StaticColour(unsigned long colour);
-	bool HasRazer();
+	void Rainbow(bool forward);
+	bool HasRazer(void);
 };
-
