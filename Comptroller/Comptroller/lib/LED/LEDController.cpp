@@ -15,68 +15,81 @@ LEDController::LEDController(std::list<uint16_t> numLeds)
 	// do not allow colour update before previous is done
 	this->updating = false;
 
-	this->serial = new serial::Serial("COM3", 9600, serial::Timeout::simpleTimeout(SERIAL_TIMEOUT));
-	this->serial->flush();
-	//Sleep(1000); 
-	std::string readstr, readstr2;
-	bool match = false;
-	for (int i = 0; i < 5; i++)
+	try
 	{
-		this->serial->write("H");
-		readstr = this->serial->readline(200, "\n");
-		if (readstr.length() == 2)
-			match = readstr.front() == 'H';
+		this->serial = new serial::Serial("COM3", 9600, serial::Timeout::simpleTimeout(SERIAL_TIMEOUT));
+		this->serial->flush();
+	
+		//Sleep(1000); 
+		std::string readstr, readstr2;
+		bool match = false;
+		for (int i = 0; i < 5; i++)
+		{
+			this->serial->write("H");
+			readstr = this->serial->readline(200, "\n");
+			if (readstr.length() == 2)
+				match = readstr.front() == 'H';
 		
-		if (match)
-			break;
-	}
-	//while (!match);
+			if (match)
+				break;
+		}
+		//while (!match);
 
-	if (!match)
-	{
-		// takes the bootloader some time to load
-		this->serial->close();
-		MessageBox(NULL, L"Nothing received at startup", L"UART Fail", MB_OK);
-		return;
-	}
+		if (!match)
+		{
+			// takes the bootloader some time to load
+			this->serial->close();
+			MessageBox(NULL, L"Nothing received at startup", L"UART Fail", MB_OK);
+			return;
+		}
 
-	//this->serial->flush();
-	this->readAll();
-	this->serial->setTimeout(serial::Timeout::simpleTimeout(SERIAL_TIMEOUT));
+		//this->serial->flush();
+		this->readAll();
+		this->serial->setTimeout(serial::Timeout::simpleTimeout(SERIAL_TIMEOUT));
 
 	
-	//if (readstr.length() > 0)
-	//	MessageBox(NULL, CStringW(readstr.c_str()), L"UART Success", MB_OK);
+		//if (readstr.length() > 0)
+		//	MessageBox(NULL, CStringW(readstr.c_str()), L"UART Success", MB_OK);
 
-	/*if (readstr.length() == 0)
-	{*/
-		// try handshake to see if mcu already running
+		/*if (readstr.length() == 0)
+		{*/
+			// try handshake to see if mcu already running
 		
-	//}
-	//MessageBox(NULL, CStringW(this->serial->readline().c_str()), L"UART Success", MB_OK);
+		//}
+		//MessageBox(NULL, CStringW(this->serial->readline().c_str()), L"UART Success", MB_OK);
 
-	//this->uart = gcnew Uart();
+		//this->uart = gcnew Uart();
 
-	//if (!this->uart->isOpen())
-	//	return;
+		//if (!this->uart->isOpen())
+		//	return;
 
-	//SetupUart();
-	//this->numLeds = numLeds;
-	//this->index = index;
+		//SetupUart();
+		//this->numLeds = numLeds;
+		//this->index = index;
 
-	// set number of all used strings
-	this->numLedStrings = numLeds.size();
-	for (uint8_t i = 0; i < numLedStrings; i++)
-	{
-		this->setNumLeds(i, numLeds.front());
-		numLeds.pop_front();
+		// set number of all used strings
+		this->numLedStrings = numLeds.size();
+		for (uint8_t i = 0; i < numLedStrings; i++)
+		{
+			this->setNumLeds(i, numLeds.front());
+			numLeds.pop_front();
+		}
+
+		//Sleep(2000);
+
+		this->leds = gcnew Colour();
+
+		//this->uart->SetupUart();
+
 	}
+	catch (serial::IOException e)
+	{
+		MessageBox(NULL, L"IO Error", L"Could not connect to led strings", MB_OK);
 
-	//Sleep(2000);
+		this->serial = new serial::Serial();
 
-	this->leds = gcnew Colour();
-
-	//this->uart->SetupUart();
+		return;
+	}
 }
 
 std::string LEDController::readline(void)
