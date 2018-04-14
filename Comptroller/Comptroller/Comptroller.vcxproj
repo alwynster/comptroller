@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\Asus\Asus.cpp" />
+    <ClCompile Include="lib\Configuration\ConfigFile.cpp" />
     <ClCompile Include="lib\Configuration\Configuration.cpp" />
     <ClCompile Include="lib\LED\hsvrgb-cpp.cpp" />
     <ClCompile Include="lib\LED\LED.cpp" />
@@ -155,7 +156,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\Asus\Asus.h" />
+    <ClInclude Include="lib\Configuration\ConfigFile.h" />
     <ClInclude Include="lib\Configuration\Configuration.h" />
+    <ClInclude Include="lib\Configuration\Convert.h" />
     <ClInclude Include="lib\LED\hsvrgb-cpp.h" />
     <ClInclude Include="lib\LED\LED.h" />
     <ClInclude Include="lib\LED\LEDController.h" />
@@ -184,6 +187,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="default.cfg" />
     <None Include="lib\hsvrgb-cpp\hsvrgb-cpp" />
   </ItemGroup>
   <ItemGroup>

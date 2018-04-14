@@ -55,6 +55,8 @@ namespace Comptroller {
 			//TODO: Konstruktorcode hier hinzuf�gen.
 			//
 			this->appInitialised = true;
+
+			this->updateComponents();
 		}
 
 		void debug();
@@ -68,7 +70,9 @@ namespace Comptroller {
 			if (components)
 			{
 				delete components;
+				
 			}
+			this->config->saveConfig();
 		}
 	private: System::Windows::Forms::TextBox^  debugBox;
 	private: System::Windows::Forms::Button^  measureButton;
