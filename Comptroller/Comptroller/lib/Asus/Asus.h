@@ -12,5 +12,10 @@ public:
 	void StaticColour(Colour ^colour);
 	void AsusTest();
 	void SetMoboColor();
-};
 
+private:
+	GPULightControl gpuLightControl;
+	DWORD gpuLedCount;
+	MbLightControl mbLightControl;
+	DWORD mbLedCount;
+};

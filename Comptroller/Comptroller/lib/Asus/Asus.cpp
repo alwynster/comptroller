@@ -62,6 +62,35 @@ Asus::Asus() {
 	(FARPROC&)SetRogMouseColor = GetProcAddress(hLib, "SetRogMouseColor");
 	(FARPROC&)RogMouseLedCount = GetProcAddress(hLib, "RogMouseLedCount");
 
+	DWORD count = 0;
+	// grab gpu interface
+	count = EnumerateGPU(NULL, 0);
+	if (count > 0) 
+	{
+		GPULightControl* GpuLightCtrl = new GPULightControl[count];
+
+		EnumerateGPU(GpuLightCtrl, count);
+		this->gpuLightControl = GpuLightCtrl;
+		this->gpuLedCount = GetGPULedCount(this->gpuLightControl);
+
+		// getting some gpuledcount count which is obscure
+		this->gpuLedCount = 0;
+	}
+	else
+		this->gpuLedCount = 0;
+	// grab motherboard interface
+	if (count > 0)
+	{
+		MbLightControl* _mbLightCtrlList = new MbLightControl[count];
+		EnumerateMbController(_mbLightCtrlList, count);
+
+		this->mbLightControl = _mbLightCtrlList[0];
+		SetMbMode(this->mbLightControl, 1);
+
+		this->mbLedCount = GetMbLedCount(this->mbLightControl);
+	}
+	else
+		this->mbLedCount = 0;
 }
 
 Asus::~Asus()
@@ -70,22 +99,44 @@ Asus::~Asus()
 }
 
 void Asus::StaticColour(Colour ^colour) {
+	BYTE *color;
 
-	DWORD count = EnumerateGPU(NULL, 0);
-	if (count > 0) {
+	// try to control gpu
+	if (this->gpuLedCount > 0) {
 
-		GPULightControl* GpuLightCtrl = new GPULightControl[count];
+		
+		SetGPUMode(this->gpuLightControl, 1);
 
-		EnumerateGPU(GpuLightCtrl, count);
-		DWORD t = GetGPULedCount(GpuLightCtrl[0]);
-		SetGPUMode(GpuLightCtrl[0], 1);
-
-		BYTE *color = new BYTE[t * 3];
+		color = new BYTE[this->gpuLedCount * 3];
 		color[0] = char(colour->r);
 		color[1] = char(colour->g);
 		color[2] = char(colour->b);
 
-		SetGPUColor(GpuLightCtrl[0], color, t * 3);
+		SetGPUColor(this->gpuLightControl, color, this->gpuLedCount * 3);
+	}
+
+	// try to control motherboard
+	if (this->mbLedCount > 0)
+	{
+		color = new BYTE[this->mbLedCount * 3];
+		ZeroMemory(color, this->mbLedCount * 3);
+		//colour->r = 255;
+		//colour->g = 255;
+		//colour->b = 255;
+
+		for (int i = 0; i < this->mbLedCount; i++)
+			//int i = 3;
+			// 0: io shield
+			// 1: chipset
+			// 2:
+			// 3:
+		{
+			color[i * 3 + 0] = char(colour->r);
+			color[i * 3 + 1] = char(colour->b);
+			color[i * 3 + 2] = char(colour->g);
+		}
+
+		SetMbColor(this->mbLightControl, color, this->mbLedCount * 3);
 	}
 
 	//Use this to run the Asus Test Software
@@ -98,7 +149,8 @@ void Asus::AsusTest() {
 
 	printf(" 0: mb demo.\n 1: vga demo.\n 2: kb demo.\n 3: mouse demo.\n");
 	fflush(stdin);
-	int input_index = getchar();
+	//int input_index = getchar();
+	int input_index = '0';
 	int effect_index = -1;
 
 	if (input_index == '0') {
